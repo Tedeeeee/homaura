@@ -1,5 +1,6 @@
 package com.shoppingmall.homaura.member.entity;
 
+import com.shoppingmall.homaura.member.utils.CryptoStringConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,21 +19,26 @@ public class Member {
     private long id;
 
     @Column(nullable = false, unique = true)
+    @Convert(converter = CryptoStringConverter.class)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
+    @Convert(converter = CryptoStringConverter.class)
     private String name;
 
     @Column(unique = true)
+    @Convert(converter = CryptoStringConverter.class)
     private String nickname;
 
     @Column(nullable = false)
+    @Convert(converter = CryptoStringConverter.class)
     private String phone;
 
     @Column(nullable = false)
+    @Convert(converter = CryptoStringConverter.class)
     private String address;
 
     private LocalDateTime createAt;

@@ -5,6 +5,7 @@ import com.shoppingmall.homaura.member.mapstruct.MemberMapStruct;
 import com.shoppingmall.homaura.member.service.MailService;
 import com.shoppingmall.homaura.member.service.MemberService;
 import com.shoppingmall.homaura.member.vo.RequestMember;
+import com.shoppingmall.homaura.member.vo.ResponseMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +40,8 @@ public class MemberController {
 
     // 회원 가입
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody RequestMember requestMemberDto) {
+    public ResponseEntity<String> createMember(@RequestBody RequestMember requestMemberDto) {
         MemberDto memberDto = memberMapStruct.changeMemberDto(requestMemberDto);
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.createMember(memberDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(memberService.createMember(memberDto));
     }
 }
