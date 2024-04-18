@@ -4,10 +4,13 @@ import com.shoppingmall.homaura.member.dto.MemberDto;
 import com.shoppingmall.homaura.member.entity.Member;
 import com.shoppingmall.homaura.member.mapstruct.MemberMapStruct;
 import com.shoppingmall.homaura.member.repository.MemberRepository;
+import com.shoppingmall.homaura.member.vo.ResponseMember;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -47,5 +50,21 @@ public class MemberServiceImpl implements MemberService {
             e.printStackTrace();
         }
         return "회원 가입을 축하드립니다";
+    }
+
+    @Override
+    public ResponseMember updateMember(MemberDto memberDto) {
+        Member member = memberRepository.findByEmail(memberDto.getEmail());
+
+        if (member == null) {
+            throw new RuntimeException("존재하지 않는 회원입니다");
+        }
+        member.changePhone(memberDto.getPhone());
+        member.changeAddress(memberDto.getAddress());
+        member.updateTime(LocalDateTime.now());
+
+        MemberDto newMemberDto = memberMapStruct.changeMemberDto(memberRepository.save(member));
+
+        return memberMapStruct.changeResponse(newMemberDto);
     }
 }
