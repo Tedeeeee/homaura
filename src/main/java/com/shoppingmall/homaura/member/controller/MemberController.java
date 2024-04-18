@@ -6,6 +6,7 @@ import com.shoppingmall.homaura.member.service.MailService;
 import com.shoppingmall.homaura.member.service.MemberService;
 import com.shoppingmall.homaura.member.vo.RequestMember;
 import com.shoppingmall.homaura.member.vo.ResponseMember;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,8 @@ public class MemberController {
 
     // 이메일 인증 ( 중복된 이메일이 있을때 가입 불가능 )
     @GetMapping("/validationEmail")
-    public ResponseEntity<String> sendEmail(@RequestParam String mail) {
-        return ResponseEntity.status(HttpStatus.OK).body(mailService.sendEmail(mail));
+    public ResponseEntity<String> sendEmail(@RequestParam String mail, HttpSession session) {
+        return ResponseEntity.status(HttpStatus.OK).body(mailService.sendEmail(mail, session));
     }
 
     // 인증 코드 확인
@@ -40,8 +41,8 @@ public class MemberController {
 
     // 회원 가입
     @PostMapping("/signup")
-    public ResponseEntity<String> createMember(@RequestBody RequestMember requestMemberDto) {
+    public ResponseEntity<String> createMember(@RequestBody RequestMember requestMemberDto, HttpSession session) {
         MemberDto memberDto = memberMapStruct.changeMemberDto(requestMemberDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(memberService.createMember(memberDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(memberService.createMember(memberDto, session));
     }
 }

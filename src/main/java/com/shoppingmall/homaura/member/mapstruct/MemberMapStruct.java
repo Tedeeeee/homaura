@@ -16,6 +16,7 @@ public interface MemberMapStruct {
     @Mapping(target = "createAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "updateAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "role", expression = "java(com.shoppingmall.homaura.member.entity.Role.USER)")
+    @Mapping(target = "memberUUID", expression = "java(java.util.UUID.randomUUID().toString())")
     Member changeEntity(MemberDto memberDto);
 
     MemberDto changeMemberDto(Member member);

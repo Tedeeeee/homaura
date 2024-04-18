@@ -47,4 +47,7 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(nullable = false)
+    private String memberUUID;
 }

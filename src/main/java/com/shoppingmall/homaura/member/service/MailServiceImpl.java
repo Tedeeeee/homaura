@@ -5,6 +5,7 @@ import com.shoppingmall.homaura.member.repository.MemberRepository;
 import com.shoppingmall.homaura.member.utils.RandomNum;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,7 +21,8 @@ public class MailServiceImpl implements MailService{
     @Value("${spring.mail.username}")
     private String myEmail;
     private final static String code = RandomNum.validationCode();
-    public String sendEmail(String email) {
+
+    public String sendEmail(String email, HttpSession session) {
 
         if (memberRepository.existsByEmail(email)) {
             throw new RuntimeException("이미 가입된 회원입니다");
@@ -31,6 +33,7 @@ public class MailServiceImpl implements MailService{
         mailDto.setTitle("homaura의 이메일 인증코드입니다");
         mailDto.setMessage("안녕하세요. homaura의 이메일 인증 코드입니다." + code + "를 입력해주세요");
         mailSend(mailDto);
+        session.setAttribute(code, email);
         return code;
     }
 
