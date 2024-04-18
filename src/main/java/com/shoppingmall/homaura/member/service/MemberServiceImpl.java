@@ -4,6 +4,7 @@ import com.shoppingmall.homaura.member.dto.MemberDto;
 import com.shoppingmall.homaura.member.entity.Member;
 import com.shoppingmall.homaura.member.mapstruct.MemberMapStruct;
 import com.shoppingmall.homaura.member.repository.MemberRepository;
+import com.shoppingmall.homaura.member.vo.RequestPassword;
 import com.shoppingmall.homaura.member.vo.ResponseMember;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -66,5 +67,21 @@ public class MemberServiceImpl implements MemberService {
         MemberDto newMemberDto = memberMapStruct.changeMemberDto(memberRepository.save(member));
 
         return memberMapStruct.changeResponse(newMemberDto);
+    }
+
+    @Override
+    public int updatePassword(RequestPassword requestPassword) {
+        Member member = memberRepository.findByEmail(requestPassword.getEmail());
+        if (!bCryptPasswordEncoder.matches(requestPassword.getNowPassword(), member.getPassword())) {
+            throw new RuntimeException("기존 비밀번호와 일치하지 않습니다");
+        }
+
+        if (!requestPassword.getNewPassword().equals(requestPassword.getRePassword())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다");
+        }
+
+        member.changePassword(bCryptPasswordEncoder.encode(requestPassword.getNewPassword()));
+        memberRepository.save(member);
+        return 1;
     }
 }

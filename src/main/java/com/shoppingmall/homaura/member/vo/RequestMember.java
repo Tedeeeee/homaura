@@ -31,7 +31,7 @@ public class RequestMember {
     private boolean nicknameVerified;
 
     @NotNull(message = "전화번호를 - 없이 작성해주세요")
-    @Pattern(regexp = "^\\d{10}$", message = "전화번호를 - 없이 10자리 이상의 숫자로 작성해주세요")
+    @Pattern(regexp = "^\\d{11}$", message = "전화번호를 - 없이 10자리 이상의 숫자로 작성해주세요")
     private String phone;
 
     @NotNull(message = "정확한 주소를 작성해주세요")
