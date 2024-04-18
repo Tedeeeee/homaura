@@ -2,7 +2,7 @@ package com.shoppingmall.homaura.member.utils;
 
 import java.util.Random;
 
-public class randomNum {
+public class RandomNum {
     static char[] charSet = new char[] {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
