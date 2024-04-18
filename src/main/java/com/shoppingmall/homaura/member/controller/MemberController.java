@@ -45,4 +45,6 @@ public class MemberController {
         MemberDto memberDto = memberMapStruct.changeMemberDto(requestMemberDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(memberService.createMember(memberDto, session));
     }
+
+
 }

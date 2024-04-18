@@ -28,7 +28,7 @@ public class MemberServiceImpl implements MemberService {
     public String createMember(MemberDto memberDto, HttpSession session) {
         String findEmail = (String) session.getAttribute(memberDto.getEmailCode());
 
-        if (!findEmail.equals(memberDto.getEmail())) {
+        if (!findEmail.equals(memberDto.getEmail()) || findEmail.equals("")) {
             throw new RuntimeException("이메일 인증을 진행해주세요");
         }
 

@@ -37,8 +37,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.info("로그인에 성공하였습니다. 이메일 : {}", memberUUID);
         log.info("로그인에 성공하였습니다. AccessToken : {}", accessToken);
         log.info("로그인에 성공하였습니다. RefreshToken : {}", refreshToken);
-
-        throw new RuntimeException("존재하지 않는 회원입니다");
     }
 
     private String extractUsername(Authentication authentication) {
