@@ -1,5 +1,9 @@
 package com.shoppingmall.homaura.member.service;
 
-public interface MemberService {
+import com.shoppingmall.homaura.member.dto.MemberDto;
 
+public interface MemberService {
+    String createMember(MemberDto memberDto);
+
+    String checkNickname(String nickname);
 }

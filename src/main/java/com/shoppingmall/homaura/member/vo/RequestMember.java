@@ -18,7 +18,7 @@ public class RequestMember {
 
     @NotNull(message = "비밀번호를 작성해주세요")
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[!@#$%^*+=-]).{8,}$", message = "비밀번호는 대문자와 지정된 특수문자를 최소 하나씩 포함하고, 8글자 이상이어야 합니다")
-    private String pwd;
+    private String password;
 
     @NotNull(message = "이름을 작성해주세요")
     @Size(min = 2, message = "이름을 작성해주세요")
@@ -26,7 +26,9 @@ public class RequestMember {
 
     @NotNull(message = "닉네임을 작성해주세요")
     @Size(min = 2, message = "닉네임을 작성해주세요")
-    private String nickName;
+    private String nickname;
+
+    private boolean nicknameVerified;
 
     @NotNull(message = "전화번호를 - 없이 작성해주세요")
     @Pattern(regexp = "^\\d{10}$", message = "전화번호를 - 없이 10자리 이상의 숫자로 작성해주세요")

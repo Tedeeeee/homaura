@@ -1,6 +1,7 @@
 package com.shoppingmall.homaura.member.service;
 
 import com.shoppingmall.homaura.member.dto.MailDto;
+import com.shoppingmall.homaura.member.repository.MemberRepository;
 import com.shoppingmall.homaura.member.utils.RandomNum;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -14,11 +15,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService{
     private final JavaMailSender javaMailSender;
+    private final MemberRepository memberRepository;
 
     @Value("${spring.mail.username}")
     private String myEmail;
     private final static String code = RandomNum.validationCode();
     public String sendEmail(String email) {
+
+        if (memberRepository.existsByEmail(email)) {
+            throw new RuntimeException("이미 가입된 회원입니다");
+        }
+
         MailDto mailDto = new MailDto();
         mailDto.setUserMail(email);
         mailDto.setTitle("homaura의 이메일 인증코드입니다");

@@ -1,6 +1,9 @@
 package com.shoppingmall.homaura.member.controller;
 
+import com.shoppingmall.homaura.member.dto.MemberDto;
+import com.shoppingmall.homaura.member.mapstruct.MemberMapStruct;
 import com.shoppingmall.homaura.member.service.MailService;
+import com.shoppingmall.homaura.member.service.MemberService;
 import com.shoppingmall.homaura.member.vo.RequestMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,21 +15,32 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/")
 public class MemberController {
 
+    private final MemberMapStruct memberMapStruct;
     private final MailService mailService;
+    private final MemberService memberService;
 
-    @GetMapping("/validationEmail/{mail}")
-    public ResponseEntity<String> sendEmail(@PathVariable String mail) {
+    // 이메일 인증 ( 중복된 이메일이 있을때 가입 불가능 )
+    @GetMapping("/validationEmail")
+    public ResponseEntity<String> sendEmail(@RequestParam String mail) {
         return ResponseEntity.status(HttpStatus.OK).body(mailService.sendEmail(mail));
     }
 
-    @GetMapping("/checkCode/{code}")
-    public ResponseEntity<String> checkCode(@PathVariable String code) {
+    // 인증 코드 확인
+    @GetMapping("/checkCode")
+    public ResponseEntity<String> checkCode(@RequestParam String code) {
         return ResponseEntity.status(HttpStatus.OK).body(mailService.checkCode(code));
     }
 
+    // 닉네임 중복 확인
+    @GetMapping("/checkNickname")
+    public ResponseEntity<String> checkNickname(@RequestParam String nickname) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.checkNickname(nickname));
+    }
+
+    // 회원 가입
     @PostMapping("/signup")
-    public void signup(@RequestBody RequestMember requestMemberDto) {
-        // 컨트롤러에서 Request -> Dto, Dto -> Response 로 변환되어야 한다.
-        // 서비스에서는 Dto -> Entity, Entity -> Dto
+    public ResponseEntity<String> signup(@RequestBody RequestMember requestMemberDto) {
+        MemberDto memberDto = memberMapStruct.changeMemberDto(requestMemberDto);
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.createMember(memberDto));
     }
 }
