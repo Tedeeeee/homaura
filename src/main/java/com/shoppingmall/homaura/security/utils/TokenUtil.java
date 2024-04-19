@@ -1,6 +1,5 @@
 package com.shoppingmall.homaura.security.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shoppingmall.homaura.member.entity.RefreshToken;
 import com.shoppingmall.homaura.member.repository.MemberRepository;
 import com.shoppingmall.homaura.member.repository.RefreshTokenRepository;
@@ -25,13 +24,6 @@ public class TokenUtil {
 
     @Value("${jwt.secret.key}")
     private String secretKey;
-
-    @Value("${jwt.access.header}")
-    private String accessHeader;
-
-    @Value("${jwt.refresh.header}")
-    private String refreshHeader;
-
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
 
@@ -142,4 +134,16 @@ public class TokenUtil {
                 .build();
         refreshTokenRepository.save(newRefreshToken);
     }
+
+    public String getMemberUUIDFromToken(String token) {
+        Claims claims = getClaimsFormToken(token);
+
+        if (claims == null) {
+            throw new RuntimeException("토큰 정보가 존재하지 않습니다");
+        }
+
+        return claims.get("memberUUID").toString();
+    }
+
+
 }

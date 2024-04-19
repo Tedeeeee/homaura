@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     RefreshToken findByMemberUUID(String memberUUID);
 
+    RefreshToken findByRefreshToken(String refreshToken);
 }

@@ -21,7 +21,7 @@ public class ProductController {
     private final ProductMapStruct productMapStruct;
     private final ProductService productService;
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<Integer> createProduct(@RequestBody RequestProduct requestProduct) {
         ProductDto productDto = productMapStruct.changeDto(requestProduct);
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productDto));
@@ -34,7 +34,7 @@ public class ProductController {
     }
 
     // 전체 상품 검색
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<Slice<ResponseProduct>> getProductList(Pageable pageable) {
         Slice<ProductDto> products = productService.getProducts(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(products.map(productMapStruct::changeResponse));
