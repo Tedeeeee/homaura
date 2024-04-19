@@ -6,6 +6,8 @@ import com.shoppingmall.homaura.product.service.ProductService;
 import com.shoppingmall.homaura.product.vo.RequestProduct;
 import com.shoppingmall.homaura.product.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,5 +30,12 @@ public class ProductController {
     public ResponseEntity<ResponseProduct> getProduct(@PathVariable String productUUID) {
         ProductDto product = productService.getProduct(productUUID);
         return ResponseEntity.status(HttpStatus.OK).body(productMapStruct.changeResponse(product));
+    }
+
+    // 전체 상품 검색
+    @GetMapping("/")
+    public ResponseEntity<Slice<ResponseProduct>> getProductList(Pageable pageable) {
+        Slice<ProductDto> products = productService.getProducts(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(products.map(productMapStruct::changeResponse));
     }
 }
