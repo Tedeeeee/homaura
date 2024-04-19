@@ -1,5 +1,6 @@
 package com.shoppingmall.homaura.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.shoppingmall.homaura.member.utils.CryptoStringConverter;
 import com.shoppingmall.homaura.wishlist.entity.WishList;
 import jakarta.persistence.*;
@@ -54,6 +55,7 @@ public class Member {
     @Column(nullable = false)
     private String memberUUID;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "member")
     private List<WishList> wishLists = new ArrayList<>();
 

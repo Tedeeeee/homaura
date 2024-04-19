@@ -3,6 +3,7 @@ package com.shoppingmall.homaura.security.config;
 import com.shoppingmall.homaura.member.repository.MemberRepository;
 import com.shoppingmall.homaura.member.repository.RefreshTokenRepository;
 import com.shoppingmall.homaura.security.filter.CustomAuthenticationFilter;
+import com.shoppingmall.homaura.security.filter.JwtAuthenticationFilter;
 import com.shoppingmall.homaura.security.handler.CustomAuthenticationFailureHandler;
 import com.shoppingmall.homaura.security.handler.CustomAuthenticationSuccessHandler;
 import com.shoppingmall.homaura.security.provider.CustomAuthenticationProvider;
@@ -19,6 +20,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 @Configuration
@@ -45,7 +49,8 @@ public class WebSecurityConfig {
 
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilter(customAuthenticationFilter());
+                .addFilter(customAuthenticationFilter())
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -85,4 +90,8 @@ public class WebSecurityConfig {
         return customAuthenticationFilter;
     }
 
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(tokenUtil, refreshTokenRepository, memberRepository);
+    }
 }
