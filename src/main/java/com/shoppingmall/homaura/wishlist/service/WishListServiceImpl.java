@@ -11,6 +11,8 @@ import com.shoppingmall.homaura.wishlist.repository.WishListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class WishListServiceImpl implements WishListService{
@@ -39,6 +41,18 @@ public class WishListServiceImpl implements WishListService{
 
         wishListRepository.save(wishList);
 
+        return 1;
+    }
+
+    @Override
+    public int deleteList(Long wishListId) {
+        Optional<WishList> wishList = wishListRepository.findById(wishListId);
+
+        if (wishList.isEmpty()) {
+            throw new RuntimeException("이미 삭제된 상품입니다");
+        }
+
+        wishListRepository.deleteById(wishListId);
         return 1;
     }
 }

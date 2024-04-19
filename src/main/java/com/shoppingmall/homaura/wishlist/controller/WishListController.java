@@ -22,4 +22,9 @@ public class WishListController {
         WishListDto wishListDto = wishListMapStruct.changeDto(requestWishList);
         return ResponseEntity.status(HttpStatus.OK).body(wishListService.putList(wishListDto));
     }
+
+    @DeleteMapping("/{wishListId}")
+    public ResponseEntity<Integer> deleteWishProduct(@PathVariable Long wishListId) {
+        return ResponseEntity.status(HttpStatus.OK).body(wishListService.deleteList(wishListId));
+    }
 }
