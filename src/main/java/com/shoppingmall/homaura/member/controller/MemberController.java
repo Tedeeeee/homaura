@@ -61,4 +61,9 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.updatePassword(requestPassword));
     }
 
+    // 로그아웃
+    @GetMapping("/logout")
+    public ResponseEntity<Integer> logout(@RequestParam String email) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.logout(email));
+    }
 }

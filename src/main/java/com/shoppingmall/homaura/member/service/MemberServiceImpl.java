@@ -2,8 +2,10 @@ package com.shoppingmall.homaura.member.service;
 
 import com.shoppingmall.homaura.member.dto.MemberDto;
 import com.shoppingmall.homaura.member.entity.Member;
+import com.shoppingmall.homaura.member.entity.RefreshToken;
 import com.shoppingmall.homaura.member.mapstruct.MemberMapStruct;
 import com.shoppingmall.homaura.member.repository.MemberRepository;
+import com.shoppingmall.homaura.member.repository.RefreshTokenRepository;
 import com.shoppingmall.homaura.member.vo.RequestPassword;
 import com.shoppingmall.homaura.member.vo.ResponseMember;
 import jakarta.servlet.http.HttpSession;
@@ -19,6 +21,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final MemberMapStruct memberMapStruct;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public String checkNickname(String nickname) {
@@ -82,6 +85,19 @@ public class MemberServiceImpl implements MemberService {
 
         member.changePassword(bCryptPasswordEncoder.encode(requestPassword.getNewPassword()));
         memberRepository.save(member);
+        return 1;
+    }
+
+    @Override
+    public int logout(String email) {
+        Member member = memberRepository.findByEmail(email);
+        RefreshToken refreshToken = refreshTokenRepository.findByMemberUUID(member.getMemberUUID());
+
+        if (refreshToken == null) {
+            throw new RuntimeException("로그인 기록이 존재하지 않습니다");
+        }
+
+        refreshTokenRepository.deleteById(refreshToken.getId());
         return 1;
     }
 }
