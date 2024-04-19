@@ -6,6 +6,7 @@ import com.shoppingmall.homaura.product.service.ProductService;
 import com.shoppingmall.homaura.product.vo.RequestProduct;
 import com.shoppingmall.homaura.product.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
@@ -37,5 +38,13 @@ public class ProductController {
     public ResponseEntity<Slice<ResponseProduct>> getProductList(Pageable pageable) {
         Slice<ProductDto> products = productService.getProducts(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(products.map(productMapStruct::changeResponse));
+    }
+
+    @GetMapping("/{productName}/search")
+    public ResponseEntity<Page<ResponseProduct>> getProductByName(@PathVariable String productName,
+                                                                  @RequestParam(defaultValue = "0") int num,
+                                                                  @RequestParam(defaultValue = "10") int size) {
+        Page<ProductDto> productByName = productService.getProductByName(productName, num, size);
+        return ResponseEntity.status(HttpStatus.OK).body(productByName.map(productMapStruct::changeResponse));
     }
 }

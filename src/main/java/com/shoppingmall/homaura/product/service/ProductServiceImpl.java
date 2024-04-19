@@ -5,6 +5,8 @@ import com.shoppingmall.homaura.product.entity.Product;
 import com.shoppingmall.homaura.product.mapstruct.ProductMapStruct;
 import com.shoppingmall.homaura.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -38,5 +40,12 @@ public class ProductServiceImpl implements ProductService{
     public Slice<ProductDto> getProducts(Pageable pageable) {
         Slice<Product> sliceBy = productRepository.findSliceBy(pageable);
         return sliceBy.map(productMapStruct::changeDto);
+    }
+
+    @Override
+    public Page<ProductDto> getProductByName(String productName,int pageNum, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        Page<Product> pageBy = productRepository.findPageByNameContaining(productName, pageable);
+        return pageBy.map(productMapStruct::changeDto);
     }
 }
