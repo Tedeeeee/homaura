@@ -35,12 +35,12 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new IpAddressMatcher("127.0.0.1")).permitAll()
-                        .requestMatchers("/login").authenticated()
+                        .anyRequest().permitAll()
                 )
 
                 .sessionManagement(session -> session

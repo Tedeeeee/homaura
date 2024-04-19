@@ -8,9 +8,7 @@ import jakarta.servlet.http.HttpSession;
 public interface MemberService {
     String createMember(MemberDto memberDto, HttpSession session);
     String checkNickname(String nickname);
-
     ResponseMember updateMember(MemberDto memberDto);
-
     int updatePassword(RequestPassword requestPassword);
-
+    int logout(String email);
 }
