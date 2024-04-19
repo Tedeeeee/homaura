@@ -1,7 +1,12 @@
 package com.shoppingmall.homaura.product.controller;
 
+import com.shoppingmall.homaura.product.dto.ProductDto;
+import com.shoppingmall.homaura.product.mapstruct.ProductMapStruct;
+import com.shoppingmall.homaura.product.service.ProductService;
+import com.shoppingmall.homaura.product.vo.RequestProduct;
 import com.shoppingmall.homaura.product.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,4 +15,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/products")
 public class ProductController {
 
+    private final ProductMapStruct productMapStruct;
+    private final ProductService productService;
+    @PostMapping("/")
+    public ResponseEntity<Integer> createProduct(@RequestBody RequestProduct requestProduct) {
+        ProductDto productDto = productMapStruct.changeDto(requestProduct);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productDto));
+    }
 }

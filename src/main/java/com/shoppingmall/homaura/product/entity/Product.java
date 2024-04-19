@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "wishlist")
+@Table(name = "product")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,7 +20,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String ProductUUID;
+    private String productUUID;
     private String name;
     private int price;
     private int stock;
