@@ -1,6 +1,6 @@
 package com.shoppingmall.homaura.member.dto;
 
-import com.shoppingmall.homaura.order.vo.ResponseOrder;
+import com.shoppingmall.homaura.wishlist.entity.WishList;
 import lombok.Data;
 
 import java.util.List;
@@ -15,5 +15,5 @@ public class MemberDto {
     private boolean nicknameVerified;
     private String phone;
     private String address;
-    private List<ResponseOrder> orders;
+    private List<WishList> wishLists;
 }

@@ -66,4 +66,10 @@ public class MemberController {
     public ResponseEntity<Integer> logout(@RequestParam String email) {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.logout(email));
     }
+
+    // 회원 정보 조회
+    @GetMapping("/users/{memberUUID}")
+    public ResponseEntity<ResponseMember> getUser(@PathVariable String memberUUID) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberMapStruct.changeResponse(memberService.getUser(memberUUID)));
+    }
 }
