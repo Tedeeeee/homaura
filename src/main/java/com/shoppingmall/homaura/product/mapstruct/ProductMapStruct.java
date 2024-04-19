@@ -17,6 +17,8 @@ public interface ProductMapStruct {
     @Mapping(target = "productUUID", expression = "java(java.util.UUID.randomUUID().toString())" )
     @Mapping(target = "createAt", expression = "java(java.time.LocalDateTime.now())")
     Product changeEntity(ProductDto productDto);
+    ProductDto changeDto(Product product);
+
 
     ResponseProduct changeResponse(ProductDto productDto);
 

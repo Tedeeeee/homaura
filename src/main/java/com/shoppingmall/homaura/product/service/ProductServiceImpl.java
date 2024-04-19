@@ -22,7 +22,13 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ProductDto getProduct(String ProductUUID) {
-        return null;
+    public ProductDto getProduct(String productUUID) {
+        Product product = productRepository.findByProductUUID(productUUID);
+
+        if (product == null) {
+            throw new RuntimeException("존재하지 않는 상품입니다");
+        }
+
+        return productMapStruct.changeDto(product);
     }
 }

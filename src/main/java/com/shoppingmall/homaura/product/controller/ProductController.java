@@ -17,9 +17,16 @@ public class ProductController {
 
     private final ProductMapStruct productMapStruct;
     private final ProductService productService;
+
     @PostMapping("/")
     public ResponseEntity<Integer> createProduct(@RequestBody RequestProduct requestProduct) {
         ProductDto productDto = productMapStruct.changeDto(requestProduct);
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productDto));
+    }
+
+    @GetMapping("/{productUUID}")
+    public ResponseEntity<ResponseProduct> getProduct(@PathVariable String productUUID) {
+        ProductDto product = productService.getProduct(productUUID);
+        return ResponseEntity.status(HttpStatus.OK).body(productMapStruct.changeResponse(product));
     }
 }
