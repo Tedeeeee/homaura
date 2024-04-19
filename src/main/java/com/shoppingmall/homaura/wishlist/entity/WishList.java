@@ -21,11 +21,11 @@ public class WishList {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "memberUUID")
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "productUUID")
     private Product product;
 
     private Long unitCount;
