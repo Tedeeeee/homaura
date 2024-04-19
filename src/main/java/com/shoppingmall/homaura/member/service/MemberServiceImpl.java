@@ -73,7 +73,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public int updatePassword(RequestPassword requestPassword) {
+    public String updatePassword(RequestPassword requestPassword) {
         Member member = memberRepository.findByEmail(requestPassword.getEmail());
         if (!bCryptPasswordEncoder.matches(requestPassword.getNowPassword(), member.getPassword())) {
             throw new RuntimeException("기존 비밀번호와 일치하지 않습니다");
@@ -84,8 +84,13 @@ public class MemberServiceImpl implements MemberService {
         }
 
         member.changePassword(bCryptPasswordEncoder.encode(requestPassword.getNewPassword()));
+        member.updateTime(LocalDateTime.now());
         memberRepository.save(member);
-        return 1;
+
+        RefreshToken refreshToken = refreshTokenRepository.findByMemberUUID(member.getMemberUUID());
+        refreshTokenRepository.deleteById(refreshToken.getId());
+
+        return "변경된 비밀번호로 다시 로그인해주세요";
     }
 
     @Override

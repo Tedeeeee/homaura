@@ -57,7 +57,7 @@ public class MemberController {
 
     // 비밀번호 수정
     @PutMapping("/password")
-    public ResponseEntity<Integer> updatePassword(@Valid @RequestBody RequestPassword requestPassword) {
+    public ResponseEntity<String> updatePassword(@Valid @RequestBody RequestPassword requestPassword) {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.updatePassword(requestPassword));
     }
 
