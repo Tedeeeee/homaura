@@ -27,6 +27,4 @@ public class WishList {
     @ManyToOne
     @JoinColumn(name = "productUUID")
     private Product product;
-
-    private Long unitCount;
 }

@@ -34,7 +34,6 @@ public class WishListServiceImpl implements WishListService{
         WishList wishList = WishList.builder()
                 .member(member)
                 .product(product)
-                .unitCount(1L)
                 .build();
 
         wishListRepository.save(wishList);

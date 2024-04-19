@@ -2,7 +2,7 @@ package com.shoppingmall.homaura.member.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.shoppingmall.homaura.wishlist.entity.WishList;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
