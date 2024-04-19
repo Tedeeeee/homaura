@@ -28,5 +28,4 @@ public class WishList {
     @JoinColumn(name = "productUUID")
     private Product product;
 
-    private Long unitCount;
 }
