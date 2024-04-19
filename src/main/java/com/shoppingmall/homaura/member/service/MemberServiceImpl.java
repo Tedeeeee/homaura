@@ -100,4 +100,16 @@ public class MemberServiceImpl implements MemberService {
         refreshTokenRepository.deleteById(refreshToken.getId());
         return 1;
     }
+
+    @Override
+    public MemberDto getUser(String memberUUID) {
+        Member member = memberRepository.findByMemberUUID(memberUUID);
+
+        if (member == null) {
+            throw new RuntimeException("존재하지 않는 회원입니다");
+        }
+
+        // 여기서 회원이 주문한 상품을 묶어서 전달해준다.
+        return memberMapStruct.changeMemberDto(member);
+    }
 }

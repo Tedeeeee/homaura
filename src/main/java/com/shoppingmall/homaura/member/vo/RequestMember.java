@@ -1,13 +1,9 @@
 package com.shoppingmall.homaura.member.vo;
 
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class RequestMember {
 
     @NotNull(message = "이메일을 작성해주세요")

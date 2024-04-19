@@ -3,7 +3,6 @@ package com.shoppingmall.homaura.member.mapstruct;
 import com.shoppingmall.homaura.member.dto.MemberDto;
 import com.shoppingmall.homaura.member.entity.Member;
 import com.shoppingmall.homaura.member.vo.RequestMember;
-import com.shoppingmall.homaura.member.vo.RequestPassword;
 import com.shoppingmall.homaura.member.vo.RequestUpdate;
 import com.shoppingmall.homaura.member.vo.ResponseMember;
 import org.mapstruct.*;

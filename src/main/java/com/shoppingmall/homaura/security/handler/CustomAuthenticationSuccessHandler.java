@@ -34,7 +34,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             tokenUtil.sendAccessAndRefreshToken(response, accessToken, refreshToken);
         }
 
-        log.info("로그인에 성공하였습니다. 이메일 : {}", memberUUID);
+        log.info("로그인에 성공하였습니다. UUID : {}", memberUUID);
         log.info("로그인에 성공하였습니다. AccessToken : {}", accessToken);
         log.info("로그인에 성공하였습니다. RefreshToken : {}", refreshToken);
     }

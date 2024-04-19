@@ -1,7 +1,7 @@
 package com.shoppingmall.homaura.member.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.shoppingmall.homaura.order.vo.ResponseOrder;
+import com.shoppingmall.homaura.wishlist.entity.WishList;
 import lombok.Data;
 
 import java.util.List;
@@ -14,5 +14,5 @@ public class ResponseMember {
     private String nickname;
     private String phone;
     private String address;
-    private List<ResponseOrder> orders;
+    private List<WishList> wishLists;
 }

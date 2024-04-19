@@ -11,4 +11,6 @@ public interface MemberService {
     ResponseMember updateMember(MemberDto memberDto);
     int updatePassword(RequestPassword requestPassword);
     int logout(String email);
+
+    MemberDto getUser(String memberUUID);
 }
