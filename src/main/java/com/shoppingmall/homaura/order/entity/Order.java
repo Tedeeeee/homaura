@@ -32,7 +32,6 @@ public class Order {
     private String deliveryAddress;
     private String deliveryPhone;
     private Long totalPrice;
-    private boolean isRefund;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -47,11 +46,15 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
-    public void check() {
-        this.isRefund = true;
-    }
-    public void transferRefunding() {
-        this.status = Status.REFUNDING;
+    public void transferStatus(int day) {
+        switch (day) {
+            case 1 -> this.status = Status.SHIPPING;
+            case 2 -> this.status = Status.REFUND;
+            case 3 -> this.status = Status.REFUNDING;
+            case 4 -> this.status = Status.DONE;
+            case 5 -> this.status = Status.CANCEL;
+        }
+
     }
 
     public void updateTime() {

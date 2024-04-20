@@ -47,9 +47,9 @@ public class OrderServiceImpl implements OrderService {
                     .member(member)
                     .deliveryAddress(orderDto.getDeliveryAddress())
                     .deliveryPhone(orderDto.getDeliveryPhone())
-                    .isRefund(false)
                     .status(Status.POSSIBLE)
                     .createAt(LocalDateTime.now())
+                    .updateAt(LocalDateTime.now())
                     .build();
 
             order.setTotalPrice(getTotalPrice(orderDto));
@@ -146,8 +146,7 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("반품 기간이 아닙니다");
         }
         // 반품이 가능하다면
-        order.check();
-        order.transferRefunding();
+        order.transferStatus(3);
         order.updateTime();
 
         orderRepository.save(order);
