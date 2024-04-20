@@ -11,4 +11,6 @@ public interface OrderService {
     List<OrderDto> getOrderList(String memberUUID);
 
     String deleteOrder(String orderUUID);
+
+    String refundOrder(String orderUUID);
 }

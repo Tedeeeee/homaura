@@ -138,6 +138,22 @@ public class OrderServiceImpl implements OrderService {
         return "주문이 취소 되었습니다";
     }
 
+    @Override
+    public String refundOrder(String orderUUID) {
+        Order order = orderRepository.findByOrderUUID(orderUUID);
+
+        if (!order.getStatus().equals(Status.REFUND)) {
+            throw new RuntimeException("반품 기간이 아닙니다");
+        }
+        // 반품이 가능하다면
+        order.check();
+        order.transferRefunding();
+        order.updateTime();
+
+        orderRepository.save(order);
+        return "반품이 진행됩니다";
+    }
+
     private OrderDto convertToDto(Order order) {
         OrderDto orderDto = orderMapStruct.changeDto(order);
         List<Content> contents = new ArrayList<>();
