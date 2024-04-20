@@ -118,6 +118,17 @@ public class OrderServiceImpl implements OrderService {
         }
 
         try {
+            List<OrderProduct> orderProductList = order.getOrderProductList();
+
+            for (OrderProduct orderProduct : orderProductList) {
+                // 각각의 상품의 주문 갯수 만큼 다시 product 테이블
+                Product product = orderProduct.getProduct();
+                Product fixProduct = productRepository.findByProductUUID(product.getProductUUID());
+
+                fixProduct.increaseStock(orderProduct.getUnitCount());
+                productRepository.save(fixProduct);
+            }
+
             orderRepository.deleteById(order.getId());
         } catch (Exception e) {
             e.printStackTrace();

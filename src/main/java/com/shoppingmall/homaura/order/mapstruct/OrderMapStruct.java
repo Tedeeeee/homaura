@@ -16,6 +16,5 @@ public interface OrderMapStruct {
     OrderDto changeDto(RequestOrder requestOrder);
     OrderDto changeDto(Order order);
 
-    @Mapping(source = "productUUIDs", target = "products")
     List<ResponseOrder> changeResponseList(List<OrderDto> orderDto);
 }
