@@ -38,11 +38,23 @@ public class Order {
     private Status status;
 
     private LocalDateTime createAt;
+    private LocalDateTime updateAt;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderProduct> orderProductList = new ArrayList<>();
 
     public void setTotalPrice(Long totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public void check() {
+        this.isRefund = true;
+    }
+    public void transferRefunding() {
+        this.status = Status.REFUNDING;
+    }
+
+    public void updateTime() {
+        this.updateAt = LocalDateTime.now();
     }
 }

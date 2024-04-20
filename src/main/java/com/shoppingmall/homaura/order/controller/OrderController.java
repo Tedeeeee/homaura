@@ -36,4 +36,9 @@ public class OrderController {
     public ResponseEntity<String> deleteOrder(@PathVariable String orderUUId) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.deleteOrder(orderUUId));
     }
+
+    @GetMapping("/{orderUUId}/refund")
+    public ResponseEntity<String> refundOrder(@PathVariable String orderUUId) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.refundOrder(orderUUId));
+    }
 }
