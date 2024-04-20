@@ -1,6 +1,5 @@
-package com.shoppingmall.homaura.wishlist.entity;
+package com.shoppingmall.homaura.order.entity;
 
-import com.shoppingmall.homaura.member.entity.Member;
 import com.shoppingmall.homaura.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,23 +7,23 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "wishlist")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "orders_product")
 @Builder
-public class WishList {
-
+public class OrderProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "orderUUID")
+    private Order order;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "productUUID")
     private Product product;
+    private int unitCount;
 }
