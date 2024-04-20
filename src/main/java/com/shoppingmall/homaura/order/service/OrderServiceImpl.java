@@ -104,6 +104,29 @@ public class OrderServiceImpl implements OrderService {
         return orderDtoList;
     }
 
+    @Override
+    @Transactional
+    public String deleteOrder(String orderUUID) {
+        Order order = orderRepository.findByOrderUUID(orderUUID);
+
+        if (order == null) {
+            throw new RuntimeException("존재하지 않는 주문입니다");
+        }
+
+        if (!order.getStatus().equals(Status.POSSIBLE)) {
+            throw new RuntimeException("주문을 취소 할 수 있는 날짜를 지났습니다");
+        }
+
+        try {
+            orderRepository.deleteById(order.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("주문실패");
+        }
+
+        return "주문이 취소 되었습니다";
+    }
+
     private OrderDto convertToDto(Order order) {
         OrderDto orderDto = orderMapStruct.changeDto(order);
         List<Content> contents = new ArrayList<>();

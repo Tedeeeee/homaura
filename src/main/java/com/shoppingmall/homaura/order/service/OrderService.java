@@ -9,4 +9,6 @@ public interface OrderService {
     String createOrder(OrderDto orderDto);
 
     List<OrderDto> getOrderList(String memberUUID);
+
+    String deleteOrder(String orderUUID);
 }

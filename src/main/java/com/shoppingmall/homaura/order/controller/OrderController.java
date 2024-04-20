@@ -31,4 +31,9 @@ public class OrderController {
         List<OrderDto> orderList = orderService.getOrderList(memberUUID);
         return ResponseEntity.status(HttpStatus.OK).body(orderMapStruct.changeResponseList(orderList));
     }
+
+    @DeleteMapping("/{orderUUId}")
+    public ResponseEntity<String> deleteOrder(@PathVariable String orderUUId) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.deleteOrder(orderUUId));
+    }
 }
