@@ -1,6 +1,5 @@
 package com.shoppingmall.homaura.product.entity;
 
-import com.shoppingmall.homaura.wishlist.entity.WishList;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "product")
@@ -29,4 +26,12 @@ public class Product {
     private int stock;
     private String producer;
     private LocalDateTime createAt;
+
+    public void increaseStock(int count) {
+        this.stock += count;
+    }
+
+    public void decreaseStock(int count) {
+        this.stock -= count;
+    }
 }

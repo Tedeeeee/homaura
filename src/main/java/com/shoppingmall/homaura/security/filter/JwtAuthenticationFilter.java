@@ -38,7 +38,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Pattern.compile("/checkNickname"),
             Pattern.compile("/products"),
             Pattern.compile("/products/.*"),
-            Pattern.compile("/products/.*/search")
+            Pattern.compile("/products/.*/search"),
+
+            // 삭제해야하는 요청정보
+            Pattern.compile("/orders")
     ));
 
     @Override
