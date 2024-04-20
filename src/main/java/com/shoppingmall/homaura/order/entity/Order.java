@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -36,6 +38,9 @@ public class Order {
     private Status status;
 
     private LocalDateTime createAt;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderProduct> orderProductList = new ArrayList<>();
 
     public void setTotalPrice(Long totalPrice) {
         this.totalPrice = totalPrice;

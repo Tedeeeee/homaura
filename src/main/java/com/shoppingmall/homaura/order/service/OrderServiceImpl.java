@@ -7,15 +7,20 @@ import com.shoppingmall.homaura.order.entity.Content;
 import com.shoppingmall.homaura.order.entity.Order;
 import com.shoppingmall.homaura.order.entity.OrderProduct;
 import com.shoppingmall.homaura.order.entity.Status;
+import com.shoppingmall.homaura.order.mapstruct.OrderMapStruct;
 import com.shoppingmall.homaura.order.repository.OrderProductRepository;
 import com.shoppingmall.homaura.order.repository.OrderRepository;
+import com.shoppingmall.homaura.order.vo.ResponseOrder;
 import com.shoppingmall.homaura.product.entity.Product;
 import com.shoppingmall.homaura.product.repository.ProductRepository;
+import com.shoppingmall.homaura.security.utils.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -25,6 +30,7 @@ public class OrderServiceImpl implements OrderService {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
     private final OrderProductRepository orderProductRepository;
+    private final OrderMapStruct orderMapStruct;
 
     @Override
     @Transactional
@@ -79,6 +85,38 @@ public class OrderServiceImpl implements OrderService {
             return "주문에 실패하였습니다";
         }
     }
+
+    @Override
+    public List<OrderDto> getOrderList(String memberUUID) {
+        // String memberUUID = SecurityUtil.getCurrentMemberUUID();
+        Member member = memberRepository.findByMemberUUID(memberUUID);
+        if (member == null) {
+            throw new RuntimeException("회원 정보가 잘못되었습니다");
+        }
+
+        List<Order> orders = orderRepository.findByMember(member);
+        List<OrderDto> orderDtoList = new ArrayList<>();
+
+        for (Order order : orders) {
+            orderDtoList.add(convertToDto(order));
+        }
+
+        return orderDtoList;
+    }
+
+    private OrderDto convertToDto(Order order) {
+        OrderDto orderDto = orderMapStruct.changeDto(order);
+        List<Content> contents = new ArrayList<>();
+        for (OrderProduct orderProduct : order.getOrderProductList()) {
+            Content content = new Content();
+            content.setProductUUID(orderProduct.getProduct().getProductUUID());
+            content.setUnitCount(orderProduct.getUnitCount());
+            contents.add(content);
+        }
+        orderDto.setProductUUIDs(contents);
+        return orderDto;
+    }
+
 
     private Long getTotalPrice(OrderDto orderDto) {
         long totalPrice = 0L;
