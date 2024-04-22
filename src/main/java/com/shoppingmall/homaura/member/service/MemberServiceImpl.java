@@ -6,15 +6,19 @@ import com.shoppingmall.homaura.member.entity.RefreshToken;
 import com.shoppingmall.homaura.member.mapstruct.MemberMapStruct;
 import com.shoppingmall.homaura.member.repository.MemberRepository;
 import com.shoppingmall.homaura.member.repository.RefreshTokenRepository;
+import com.shoppingmall.homaura.member.vo.ProductInfo;
 import com.shoppingmall.homaura.member.vo.RequestPassword;
 import com.shoppingmall.homaura.member.vo.ResponseMember;
 import com.shoppingmall.homaura.security.utils.SecurityUtil;
+import com.shoppingmall.homaura.wishlist.entity.WishList;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -122,7 +126,20 @@ public class MemberServiceImpl implements MemberService {
             throw new RuntimeException("존재하지 않는 회원입니다");
         }
 
+        List<WishList> wishLists = member.getWishLists();
+        List<ProductInfo> productInfoList = new ArrayList<>();
+        for (WishList wishList : wishLists) {
+            ProductInfo productInfo = new ProductInfo();
+            productInfo.setProduct(wishList.getProduct());
+            productInfo.setUnitCount(wishList.getUnitCount());
+
+            productInfoList.add(productInfo);
+        }
+
+        MemberDto memberDto = memberMapStruct.changeMemberDto(member);
+        memberDto.setWishLists(productInfoList);
+
         // 여기서 회원이 주문한 상품을 묶어서 전달해준다.
-        return memberMapStruct.changeMemberDto(member);
+        return memberDto;
     }
 }

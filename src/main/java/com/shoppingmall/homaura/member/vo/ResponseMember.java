@@ -14,5 +14,5 @@ public class ResponseMember {
     private String nickname;
     private String phone;
     private String address;
-    private List<WishList> wishLists;
+    private List<ProductInfo> wishLists;
 }
