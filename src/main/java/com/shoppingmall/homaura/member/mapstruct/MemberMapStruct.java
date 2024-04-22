@@ -18,6 +18,7 @@ public interface MemberMapStruct {
     @Mapping(target = "memberUUID", expression = "java(java.util.UUID.randomUUID().toString())")
     Member changeEntity(MemberDto memberDto);
 
+    // 여기서
     MemberDto changeMemberDto(Member member);
 
     ResponseMember changeResponse(MemberDto memberDto);
