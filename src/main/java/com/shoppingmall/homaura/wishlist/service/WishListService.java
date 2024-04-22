@@ -6,4 +6,7 @@ public interface WishListService {
     int putList(WishListDto wishListDto);
 
     int deleteList(Long wishListId);
+
+    String updateProductUnitCount(String productUUID, int unitCount);
+
 }

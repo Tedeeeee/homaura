@@ -27,4 +27,10 @@ public class WishListController {
     public ResponseEntity<Integer> deleteWishProduct(@PathVariable Long wishListId) {
         return ResponseEntity.status(HttpStatus.OK).body(wishListService.deleteList(wishListId));
     }
+
+    @PutMapping("/{productUUID}/{unitCount}")
+    public ResponseEntity<String> updateProductUnitCount(@PathVariable int unitCount,
+                                                         @PathVariable String productUUID) {
+        return ResponseEntity.status(HttpStatus.OK).body(wishListService.updateProductUnitCount(productUUID, unitCount));
+    }
 }

@@ -29,4 +29,9 @@ public class WishList {
     private Product product;
 
     private int unitCount;
+
+    public void updateUnitCount(int unitCount) {
+        if (unitCount <= 0) return;
+        this.unitCount = unitCount;
+    }
 }

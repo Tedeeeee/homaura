@@ -11,6 +11,7 @@ import com.shoppingmall.homaura.wishlist.mapstruct.WishListMapStruct;
 import com.shoppingmall.homaura.wishlist.repository.WishListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -56,5 +57,27 @@ public class WishListServiceImpl implements WishListService{
 
         wishListRepository.deleteById(wishListId);
         return 1;
+    }
+
+    @Transactional
+    @Override
+    public String updateProductUnitCount(String productUUID, int unitCount) {
+        String memberUUID = SecurityUtil.getCurrentMemberUUID();
+        Member member = memberRepository.findByMemberUUID(memberUUID);
+        Product product = productRepository.findByProductUUID(productUUID);
+        WishList aWishList = wishListRepository.findByProductAndMember(product, member);
+
+        if (aWishList == null) {
+            throw new RuntimeException("위시리스트에 담긴 상품이 아닙니다");
+        }
+
+        if (unitCount <= 0 || product.getStock() < unitCount) {
+            throw new RuntimeException("상품의 주문량이 잘못되었습니다");
+        }
+
+        aWishList.updateUnitCount(unitCount);
+        wishListRepository.save(aWishList);
+
+        return "주문량이 수정되었습니다";
     }
 }
