@@ -5,5 +5,4 @@ import lombok.Data;
 @Data
 public class WishListDto {
     private String ProductUUID;
-    private String MemberUUID;
 }

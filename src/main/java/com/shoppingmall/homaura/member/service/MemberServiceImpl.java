@@ -8,6 +8,7 @@ import com.shoppingmall.homaura.member.repository.MemberRepository;
 import com.shoppingmall.homaura.member.repository.RefreshTokenRepository;
 import com.shoppingmall.homaura.member.vo.RequestPassword;
 import com.shoppingmall.homaura.member.vo.ResponseMember;
+import com.shoppingmall.homaura.security.utils.SecurityUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -94,8 +95,14 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public int logout(String email) {
-        Member member = memberRepository.findByEmail(email);
+    public String logout() {
+        String memberUUID = SecurityUtil.getCurrentMemberUUID();
+        Member member = memberRepository.findByMemberUUID(memberUUID);
+
+        if (member == null) {
+            throw new RuntimeException("존재하지 않는 회원입니다");
+        }
+
         RefreshToken refreshToken = refreshTokenRepository.findByMemberUUID(member.getMemberUUID());
 
         if (refreshToken == null) {
@@ -103,11 +110,12 @@ public class MemberServiceImpl implements MemberService {
         }
 
         refreshTokenRepository.deleteById(refreshToken.getId());
-        return 1;
+        return "로그아웃에 성공하였습니다";
     }
 
     @Override
-    public MemberDto getUser(String memberUUID) {
+    public MemberDto getUser() {
+        String memberUUID = SecurityUtil.getCurrentMemberUUID();
         Member member = memberRepository.findByMemberUUID(memberUUID);
 
         if (member == null) {

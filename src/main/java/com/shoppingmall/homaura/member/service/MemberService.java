@@ -10,7 +10,7 @@ public interface MemberService {
     String checkNickname(String nickname);
     ResponseMember updateMember(MemberDto memberDto);
     String updatePassword(RequestPassword requestPassword);
-    int logout(String email);
+    String logout();
 
-    MemberDto getUser(String memberUUID);
+    MemberDto getUser();
 }

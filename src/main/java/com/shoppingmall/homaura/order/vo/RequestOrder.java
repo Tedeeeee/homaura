@@ -11,7 +11,6 @@ import java.util.List;
 
 @Data
 public class RequestOrder {
-    private String memberUUID;
     private List<Content> productUUIDs = new ArrayList<>();
 
     @NotNull(message = "정확한 주소를 작성해주세요")

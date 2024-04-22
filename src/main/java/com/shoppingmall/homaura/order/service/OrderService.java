@@ -8,7 +8,7 @@ import java.util.List;
 public interface OrderService {
     String createOrder(OrderDto orderDto);
 
-    List<OrderDto> getOrderList(String memberUUID);
+    List<OrderDto> getOrderList();
 
     String deleteOrder(String orderUUID);
 

@@ -4,6 +4,7 @@ import com.shoppingmall.homaura.member.entity.Member;
 import com.shoppingmall.homaura.member.repository.MemberRepository;
 import com.shoppingmall.homaura.product.entity.Product;
 import com.shoppingmall.homaura.product.repository.ProductRepository;
+import com.shoppingmall.homaura.security.utils.SecurityUtil;
 import com.shoppingmall.homaura.wishlist.dto.WishListDto;
 import com.shoppingmall.homaura.wishlist.entity.WishList;
 import com.shoppingmall.homaura.wishlist.mapstruct.WishListMapStruct;
@@ -23,7 +24,8 @@ public class WishListServiceImpl implements WishListService{
 
     @Override
     public int putList(WishListDto wishListDto) {
-        Member member = memberRepository.findByMemberUUID(wishListDto.getMemberUUID());
+        String memberUUID = SecurityUtil.getCurrentMemberUUID();
+        Member member = memberRepository.findByMemberUUID(memberUUID);
         Product product = productRepository.findByProductUUID(wishListDto.getProductUUID());
 
         WishList existingWishList = wishListRepository.findByProductAndMember(product, member);
