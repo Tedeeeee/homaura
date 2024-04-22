@@ -27,8 +27,8 @@ public class OrderController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<ResponseOrder>> getOrders(@RequestParam String memberUUID) {
-        List<OrderDto> orderList = orderService.getOrderList(memberUUID);
+    public ResponseEntity<List<ResponseOrder>> getOrders() {
+        List<OrderDto> orderList = orderService.getOrderList();
         return ResponseEntity.status(HttpStatus.OK).body(orderMapStruct.changeResponseList(orderList));
     }
 

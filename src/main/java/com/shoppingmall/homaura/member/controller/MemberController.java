@@ -63,13 +63,13 @@ public class MemberController {
 
     // 로그아웃
     @GetMapping("/logout")
-    public ResponseEntity<Integer> logout(@RequestParam String email) {
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.logout(email));
+    public ResponseEntity<String> logout() {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.logout());
     }
 
     // 회원 정보 조회
-    @GetMapping("/users/{memberUUID}")
-    public ResponseEntity<ResponseMember> getUser(@PathVariable String memberUUID) {
-        return ResponseEntity.status(HttpStatus.OK).body(memberMapStruct.changeResponse(memberService.getUser(memberUUID)));
+    @GetMapping("/users")
+    public ResponseEntity<ResponseMember> getUser() {
+        return ResponseEntity.status(HttpStatus.OK).body(memberMapStruct.changeResponse(memberService.getUser()));
     }
 }

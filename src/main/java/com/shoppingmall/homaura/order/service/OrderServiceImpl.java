@@ -35,7 +35,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public String createOrder(OrderDto orderDto) {
-        Member member = memberRepository.findByMemberUUID(orderDto.getMemberUUID());
+        String memberUUID = SecurityUtil.getCurrentMemberUUID();
+        Member member = memberRepository.findByMemberUUID(memberUUID);
 
         if (member == null) {
             throw new IllegalArgumentException("회원을 찾을 수 없습니다");
@@ -87,8 +88,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto> getOrderList(String memberUUID) {
-        // String memberUUID = SecurityUtil.getCurrentMemberUUID();
+    public List<OrderDto> getOrderList() {
+        String memberUUID = SecurityUtil.getCurrentMemberUUID();
         Member member = memberRepository.findByMemberUUID(memberUUID);
         if (member == null) {
             throw new RuntimeException("회원 정보가 잘못되었습니다");

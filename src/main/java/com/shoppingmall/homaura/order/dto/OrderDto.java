@@ -9,7 +9,6 @@ import java.util.List;
 
 @Data
 public class OrderDto {
-    private String memberUUID;
     private String deliveryAddress;
     private String deliveryPhone;
     private Long totalPrice;
