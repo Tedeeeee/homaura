@@ -31,14 +31,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final MemberRepository memberRepository;
 
     private static final List<Pattern> EXCLUDE_PATTERNS = Collections.unmodifiableList(Arrays.asList(
-            Pattern.compile("/login"),
-            Pattern.compile("/validationEmail"),
-            Pattern.compile("/checkCode"),
-            Pattern.compile("/signup"),
-            Pattern.compile("/checkNickname"),
-            Pattern.compile("/products"),
-            Pattern.compile("/products/.*"),
-            Pattern.compile("/products/.*/search")
+//            Pattern.compile("/login"),
+//            Pattern.compile("/validationEmail"),
+//            Pattern.compile("/checkCode"),
+//            Pattern.compile("/signup"),
+//            Pattern.compile("/checkNickname"),
+//            Pattern.compile("/products"),
+//            Pattern.compile("/products/.*"),
+//            Pattern.compile("/products/.*/search")
+            Pattern.compile("/*")
     ));
 
     @Override

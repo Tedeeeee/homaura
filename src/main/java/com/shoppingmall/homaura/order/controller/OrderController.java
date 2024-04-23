@@ -21,7 +21,7 @@ public class OrderController {
     private final OrderMapStruct orderMapStruct;
 
     @PostMapping("")
-    public ResponseEntity<String> createOrder(@Valid @RequestBody RequestOrder requestOrder) {
+    public ResponseEntity<Integer> createOrder(@Valid @RequestBody RequestOrder requestOrder) {
         OrderDto orderDto = orderMapStruct.changeDto(requestOrder);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(orderDto));
     }

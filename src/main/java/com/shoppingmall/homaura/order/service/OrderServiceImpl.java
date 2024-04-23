@@ -10,13 +10,13 @@ import com.shoppingmall.homaura.order.entity.Status;
 import com.shoppingmall.homaura.order.mapstruct.OrderMapStruct;
 import com.shoppingmall.homaura.order.repository.OrderProductRepository;
 import com.shoppingmall.homaura.order.repository.OrderRepository;
-import com.shoppingmall.homaura.order.vo.ResponseOrder;
 import com.shoppingmall.homaura.product.entity.Product;
 import com.shoppingmall.homaura.product.repository.ProductRepository;
 import com.shoppingmall.homaura.security.utils.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,57 +34,51 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public String createOrder(OrderDto orderDto) {
-        String memberUUID = SecurityUtil.getCurrentMemberUUID();
-        Member member = memberRepository.findByMemberUUID(memberUUID);
+    public int createOrder(OrderDto orderDto) {
+        // String memberUUID = SecurityUtil.getCurrentMemberUUID();
+        Member member = memberRepository.findByMemberUUID(orderDto.getMemberUUID());
 
         if (member == null) {
             throw new IllegalArgumentException("회원을 찾을 수 없습니다");
         }
 
-        try {
-            Order order = Order.builder()
-                    .orderUUID(UUID.randomUUID().toString())
-                    .member(member)
-                    .deliveryAddress(orderDto.getDeliveryAddress())
-                    .deliveryPhone(orderDto.getDeliveryPhone())
-                    .status(Status.POSSIBLE)
-                    .createAt(LocalDateTime.now())
-                    .updateAt(LocalDateTime.now())
-                    .build();
+        Order order = Order.builder()
+                .orderUUID(UUID.randomUUID().toString())
+                .member(member)
+                .deliveryAddress(orderDto.getDeliveryAddress())
+                .deliveryPhone(orderDto.getDeliveryPhone())
+                .status(Status.POSSIBLE)
+                .createAt(LocalDateTime.now())
+                .updateAt(LocalDateTime.now())
+                .build();
 
-            order.setTotalPrice(getTotalPrice(orderDto));
+        order.setTotalPrice(getTotalPrice(orderDto));
 
-            orderRepository.save(order);
+        orderRepository.save(order);
 
-            for (Content content : orderDto.getProductUUIDs()) {
-                Product product = productRepository.findByProductUUID(content.getProductUUID());
+        for (Content content : orderDto.getProductUUIDs()) {
+            Product product = productRepository.findByProductUUID(content.getProductUUID());
 
-                if (product == null) {
-                    throw new IllegalArgumentException("제품을 찾을 수 없습니다");
-                }
-
-                if (product.getStock() < content.getUnitCount()) {
-                    throw new RuntimeException("재고가 부족하여 주문을 생성할 수 없습니다");
-                }
-
-                product.decreaseStock(content.getUnitCount());
-
-                productRepository.save(product);
-
-                OrderProduct orderProduct = OrderProduct.builder()
-                        .order(order)
-                        .product(product)
-                        .unitCount(content.getUnitCount())
-                        .build();
-                orderProductRepository.save(orderProduct);
+            if (product == null) {
+                throw new IllegalArgumentException("제품을 찾을 수 없습니다");
             }
 
-            return "주문을 성공하였습니다";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "주문에 실패하였습니다";
+            if (product.getStock() < content.getUnitCount()) {
+                throw new RuntimeException("재고가 부족하여 주문을 생성할 수 없습니다");
+            }
+
+            product.decreaseStock(content.getUnitCount());
+
+            productRepository.save(product);
+
+            OrderProduct orderProduct = OrderProduct.builder()
+                    .order(order)
+                    .product(product)
+                    .unitCount(content.getUnitCount())
+                    .build();
+            orderProductRepository.save(orderProduct);
         }
+        return 1;
     }
 
     @Override
@@ -172,6 +166,9 @@ public class OrderServiceImpl implements OrderService {
         long totalPrice = 0L;
         for (Content content : orderDto.getProductUUIDs()) {
             Product product = productRepository.findByProductUUID(content.getProductUUID());
+            if (product == null) {
+                throw new RuntimeException("제품을 찾을 수 없습니다, getTotalPrice");
+            }
             totalPrice += (long) product.getPrice() * content.getUnitCount();
         }
         return totalPrice;

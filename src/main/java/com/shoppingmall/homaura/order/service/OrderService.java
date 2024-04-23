@@ -6,7 +6,7 @@ import com.shoppingmall.homaura.order.dto.OrderDto;
 import java.util.List;
 
 public interface OrderService {
-    String createOrder(OrderDto orderDto);
+    int createOrder(OrderDto orderDto);
 
     List<OrderDto> getOrderList();
 

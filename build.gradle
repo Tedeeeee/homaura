@@ -33,6 +33,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 	implementation "com.googlecode.json-simple:json-simple:1.1.1"
 
+
 	compileOnly 'org.projectlombok:lombok'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -46,6 +47,11 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+
+	testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+	testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.11.0'
+	testImplementation("org.assertj:assertj-core:3.22.0")
+	testImplementation group: 'com.h2database', name: 'h2', version: '2.2.224'
 }
 
 tasks.named('test') {
