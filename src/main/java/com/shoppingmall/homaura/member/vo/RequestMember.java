@@ -1,13 +1,9 @@
 package com.shoppingmall.homaura.member.vo;
 
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class RequestMember {
 
     @NotNull(message = "이메일을 작성해주세요")
@@ -31,7 +27,7 @@ public class RequestMember {
     private boolean nicknameVerified;
 
     @NotNull(message = "전화번호를 - 없이 작성해주세요")
-    @Pattern(regexp = "^\\d{10}$", message = "전화번호를 - 없이 10자리 이상의 숫자로 작성해주세요")
+    @Pattern(regexp = "^\\d{10,}$", message = "전화번호를 - 없이 10자리 이상의 숫자로 작성해주세요")
     private String phone;
 
     @NotNull(message = "정확한 주소를 작성해주세요")

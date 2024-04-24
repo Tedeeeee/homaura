@@ -5,8 +5,11 @@ import com.shoppingmall.homaura.member.mapstruct.MemberMapStruct;
 import com.shoppingmall.homaura.member.service.MailService;
 import com.shoppingmall.homaura.member.service.MemberService;
 import com.shoppingmall.homaura.member.vo.RequestMember;
+import com.shoppingmall.homaura.member.vo.RequestPassword;
+import com.shoppingmall.homaura.member.vo.RequestUpdate;
 import com.shoppingmall.homaura.member.vo.ResponseMember;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,10 +44,32 @@ public class MemberController {
 
     // 회원 가입
     @PostMapping("/signup")
-    public ResponseEntity<String> createMember(@RequestBody RequestMember requestMemberDto, HttpSession session) {
-        MemberDto memberDto = memberMapStruct.changeMemberDto(requestMemberDto);
+    public ResponseEntity<String> createMember(@Valid @RequestBody RequestMember requestMember, HttpSession session) {
+        MemberDto memberDto = memberMapStruct.changeMemberDto(requestMember);
         return ResponseEntity.status(HttpStatus.CREATED).body(memberService.createMember(memberDto, session));
     }
 
+    // 전화번호, 주소 수정
+    @PutMapping("/users")
+    public ResponseEntity<ResponseMember> updateMember(@Valid @RequestBody RequestUpdate requestUpdate) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.updateMember(memberMapStruct.changeMemberDto(requestUpdate)));
+    }
 
+    // 비밀번호 수정
+    @PutMapping("/password")
+    public ResponseEntity<String> updatePassword(@Valid @RequestBody RequestPassword requestPassword) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.updatePassword(requestPassword));
+    }
+
+    // 로그아웃
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout() {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.logout());
+    }
+
+    // 회원 정보 조회
+    @GetMapping("/users")
+    public ResponseEntity<ResponseMember> getUser() {
+        return ResponseEntity.status(HttpStatus.OK).body(memberMapStruct.changeResponse(memberService.getUser()));
+    }
 }

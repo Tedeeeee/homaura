@@ -1,6 +1,10 @@
 package com.shoppingmall.homaura.member.dto;
 
+import com.shoppingmall.homaura.member.vo.ProductInfo;
+import com.shoppingmall.homaura.wishlist.entity.WishList;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class MemberDto {
@@ -12,4 +16,5 @@ public class MemberDto {
     private boolean nicknameVerified;
     private String phone;
     private String address;
+    private List<ProductInfo> wishLists;
 }

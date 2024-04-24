@@ -1,6 +1,5 @@
 package com.shoppingmall.homaura.security.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shoppingmall.homaura.member.entity.RefreshToken;
 import com.shoppingmall.homaura.member.repository.MemberRepository;
 import com.shoppingmall.homaura.member.repository.RefreshTokenRepository;
@@ -25,13 +24,6 @@ public class TokenUtil {
 
     @Value("${jwt.secret.key}")
     private String secretKey;
-
-    @Value("${jwt.access.header}")
-    private String accessHeader;
-
-    @Value("${jwt.refresh.header}")
-    private String refreshHeader;
-
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
 
@@ -58,7 +50,7 @@ public class TokenUtil {
     // accessToken 만료기간
     private static Date createAccessTokenExpiredDate() {
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.HOUR, 1);
+        c.add(Calendar.MINUTE, 5);
         return c.getTime();
     }
 
@@ -95,12 +87,13 @@ public class TokenUtil {
     // 토큰 안에 있는 정보 가져오기
     private Claims getClaimsFormToken(String token) {
         Key key = createSignature();
-        try {
-            Claims body = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        Claims body = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+
+        if (body != null) {
             log.info("토큰 해석 성공: " + body);
             return body;
-        } catch (JwtException e) {
-            log.error("토큰 해석 실패" + e.getMessage());
+        } else {
+            log.error("토큰 해석 실패");
             return null;
         }
     }
@@ -110,18 +103,16 @@ public class TokenUtil {
             Claims claims = getClaimsFormToken(token);
             if (claims != null) {
                 log.info("expireTime : " + claims.getExpiration());
+                isTokenExpired(claims.getExpiration());
+                return true;
             }
-
-            return true;
-        } catch (ExpiredJwtException exception) {
-            log.error("만료된 JWT 토큰입니다");
             return false;
         } catch (JwtException exception) {
-            log.error("토큰에 문제가 있습니다.");
-            return false;
+            log.error("토큰에 문제가 있습니다");
+            throw new JwtException("토큰에 문제 발생");
         } catch (NullPointerException exception) {
             log.error("토큰이 존재하지 않습니다");
-            return false;
+            throw new NullPointerException("토큰이 존재하지 않습니다");
         }
     }
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
@@ -141,5 +132,23 @@ public class TokenUtil {
                 .refreshToken(refreshTokenValue)
                 .build();
         refreshTokenRepository.save(newRefreshToken);
+    }
+
+    public String getMemberUUIDFromToken(String token) {
+        Claims claims = getClaimsFormToken(token);
+
+        if (claims == null) {
+            throw new RuntimeException("토큰 정보가 존재하지 않습니다");
+        }
+
+        return claims.get("memberUUID").toString();
+    }
+
+    private boolean isTokenExpired(Date expiration){
+        boolean expire = expiration.before(new Date());
+        if (expire) {
+            throw new RuntimeException("만료된 JWT 토큰입니다, 다시 로그인 해주세요");
+        }
+        return true;
     }
 }
