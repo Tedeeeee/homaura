@@ -3,7 +3,6 @@ package com.example.userservice.security.config;
 import com.example.userservice.member.repository.MemberRepository;
 import com.example.userservice.member.repository.RefreshTokenRepository;
 import com.example.userservice.security.filter.CustomAuthenticationFilter;
-import com.example.userservice.security.filter.JwtAuthenticationFilter;
 import com.example.userservice.security.handler.CustomAuthenticationFailureHandler;
 import com.example.userservice.security.handler.CustomAuthenticationSuccessHandler;
 import com.example.userservice.security.provider.CustomAuthenticationProvider;
@@ -46,8 +45,7 @@ public class WebSecurityConfig {
 
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilter(customAuthenticationFilter())
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilter(customAuthenticationFilter());
 
         return http.build();
     }
@@ -85,10 +83,5 @@ public class WebSecurityConfig {
         customAuthenticationFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler());
         customAuthenticationFilter.afterPropertiesSet();
         return customAuthenticationFilter;
-    }
-
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(tokenUtil, refreshTokenRepository, memberRepository);
     }
 }
