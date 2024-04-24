@@ -3,6 +3,7 @@ package com.example.userservice.member.service;
 import com.example.userservice.member.dto.MemberDto;
 import com.example.userservice.member.vo.RequestPassword;
 import com.example.userservice.member.vo.ResponseMember;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 public interface MemberService {
@@ -10,7 +11,7 @@ public interface MemberService {
     String checkNickname(String nickname);
     ResponseMember updateMember(MemberDto memberDto);
     String updatePassword(RequestPassword requestPassword);
-    String logout();
+    String logout(HttpServletRequest request);
 
-    MemberDto getUser();
+    MemberDto getUser(HttpServletRequest request);
 }

@@ -8,14 +8,13 @@ import com.example.userservice.member.repository.MemberRepository;
 import com.example.userservice.member.repository.RefreshTokenRepository;
 import com.example.userservice.member.vo.RequestPassword;
 import com.example.userservice.member.vo.ResponseMember;
-import com.example.userservice.security.utils.SecurityUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -97,8 +96,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String logout() {
-        String memberUUID = SecurityUtil.getCurrentMemberUUID();
+    public String logout(HttpServletRequest request) {
+        String memberUUID = request.getHeader("uuid");
         Member member = memberRepository.findByMemberUUID(memberUUID);
 
         if (member == null) {
@@ -116,8 +115,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDto getUser() {
-        String memberUUID = SecurityUtil.getCurrentMemberUUID();
+    public MemberDto getUser(HttpServletRequest request) {
+        String memberUUID = request.getHeader("uuid");
         Member member = memberRepository.findByMemberUUID(memberUUID);
 
         if (member == null) {
@@ -136,6 +135,7 @@ public class MemberServiceImpl implements MemberService {
 
         MemberDto memberDto = memberMapStruct.changeMemberDto(member);
 //        memberDto.setWishLists(productInfoList);
+
 
         // 여기서 회원이 주문한 상품을 묶어서 전달해준다.
         return memberDto;

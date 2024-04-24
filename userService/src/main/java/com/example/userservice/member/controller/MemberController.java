@@ -9,6 +9,7 @@ import com.example.userservice.member.vo.RequestMember;
 import com.example.userservice.member.vo.RequestPassword;
 import com.example.userservice.member.vo.RequestUpdate;
 import com.example.userservice.member.vo.ResponseMember;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -67,14 +68,14 @@ public class MemberController {
 
     // 로그아웃
     @GetMapping("/logout")
-    public ResponseEntity<String> logout() {
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.logout());
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.logout(request));
     }
 
     // 회원 정보 조회
     @GetMapping("/users")
-    public ResponseEntity<ResponseMember> getUser() {
-        return ResponseEntity.status(HttpStatus.OK).body(memberMapStruct.changeResponse(memberService.getUser()));
+    public ResponseEntity<ResponseMember> getUser(HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberMapStruct.changeResponse(memberService.getUser(request)));
     }
 
     @GetMapping("/getRedis")

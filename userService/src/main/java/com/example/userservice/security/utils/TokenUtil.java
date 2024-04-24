@@ -19,7 +19,6 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 public class TokenUtil {
-    private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Value("${jwt.secret.key}")
@@ -50,7 +49,7 @@ public class TokenUtil {
     // accessToken 만료기간
     private static Date createAccessTokenExpiredDate() {
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.MINUTE, 5);
+        c.add(Calendar.HOUR_OF_DAY, 1);
         return c.getTime();
     }
 
@@ -98,23 +97,6 @@ public class TokenUtil {
         }
     }
 
-    public boolean isValidToken(String token) {
-        try {
-            Claims claims = getClaimsFormToken(token);
-            if (claims != null) {
-                log.info("expireTime : " + claims.getExpiration());
-                isTokenExpired(claims.getExpiration());
-                return true;
-            }
-            return false;
-        } catch (JwtException exception) {
-            log.error("토큰에 문제가 있습니다");
-            throw new JwtException("토큰에 문제 발생");
-        } catch (NullPointerException exception) {
-            log.error("토큰이 존재하지 않습니다");
-            throw new NullPointerException("토큰이 존재하지 않습니다");
-        }
-    }
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json");
@@ -132,23 +114,5 @@ public class TokenUtil {
                 .refreshToken(refreshTokenValue)
                 .build();
         refreshTokenRepository.save(newRefreshToken);
-    }
-
-    public String getMemberUUIDFromToken(String token) {
-        Claims claims = getClaimsFormToken(token);
-
-        if (claims == null) {
-            throw new RuntimeException("토큰 정보가 존재하지 않습니다");
-        }
-
-        return claims.get("memberUUID").toString();
-    }
-
-    private boolean isTokenExpired(Date expiration){
-        boolean expire = expiration.before(new Date());
-        if (expire) {
-            throw new RuntimeException("만료된 JWT 토큰입니다, 다시 로그인 해주세요");
-        }
-        return true;
     }
 }
