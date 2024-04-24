@@ -4,6 +4,7 @@ import com.example.userservice.member.dto.MemberDto;
 import com.example.userservice.member.mapstruct.MemberMapStruct;
 import com.example.userservice.member.service.MailService;
 import com.example.userservice.member.service.MemberService;
+import com.example.userservice.member.service.RedisService;
 import com.example.userservice.member.vo.RequestMember;
 import com.example.userservice.member.vo.RequestPassword;
 import com.example.userservice.member.vo.RequestUpdate;
@@ -11,6 +12,7 @@ import com.example.userservice.member.vo.ResponseMember;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,8 @@ public class MemberController {
     private final MemberMapStruct memberMapStruct;
     private final MailService mailService;
     private final MemberService memberService;
+    private final Environment env;
+    private final RedisService redisService;
 
     // 이메일 인증 ( 중복된 이메일이 있을때 가입 불가능 )
     @GetMapping("/validationEmail")
@@ -73,12 +77,8 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberMapStruct.changeResponse(memberService.getUser()));
     }
 
-    @GetMapping("/healthCheck")
-    public String status() {
-        return String.valueOf("It's Working in User Service"
-                + ", port(local.server.port) = " + env.getProperty("local.server.port")
-                + ", port(server.port) = " + env.getProperty("server.port")
-                + ", token secret = " + env.getProperty("token.secret")
-                + ", token expiration time = " + env.getProperty("token.expiration_time"));
+    @GetMapping("/getRedis")
+    public String getValue(@RequestParam String key) {
+        return redisService.getValue(key);
     }
 }

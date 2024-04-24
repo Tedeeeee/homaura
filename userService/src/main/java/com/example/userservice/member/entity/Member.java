@@ -1,7 +1,6 @@
 package com.example.userservice.member.entity;
 
 import com.example.userservice.member.utils.CryptoStringConverter;
-import com.example.userservice.wishlist.entity.WishList;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -57,9 +56,9 @@ public class Member {
     @Column(nullable = false)
     private String memberUUID;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "member")
-    private List<WishList> wishLists = new ArrayList<>();
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "member")
+//    private List<WishList> wishLists = new ArrayList<>();
 
     public void changePhone(String phone) {
         this.phone = phone;
