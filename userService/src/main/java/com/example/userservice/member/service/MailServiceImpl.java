@@ -12,15 +12,18 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+
 @Service
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService{
     private final JavaMailSender javaMailSender;
     private final MemberRepository memberRepository;
+    private final RedisService redisService;
 
     @Value("${spring.mail.username}")
     private String myEmail;
-    private final static String code = RandomNum.validationCode();
+    private String code = RandomNum.validationCode();
 
     public String sendEmail(String email, HttpSession session) {
 
@@ -34,12 +37,14 @@ public class MailServiceImpl implements MailService{
         mailDto.setMessage("안녕하세요. homaura의 이메일 인증 코드입니다." + code + "를 입력해주세요");
         mailSend(mailDto);
         session.setAttribute(code, email);
+        redisService.setValues(code, email, Duration.ofMinutes(10));
         return code;
     }
 
     public String checkCode(String checkCode) {
-        if (code.equals(checkCode)) return "인증이 완료되었습니다.";
-        else return "인증 번호가 잘못되었습니다";
+        String value = redisService.getValue(checkCode);
+        if (!value.equals("")) return "인증이 완료되었습니다.";
+        else return "인증에 실패하였습니다";
     }
 
     private void mailSend(MailDto mailDto) {

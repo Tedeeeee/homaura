@@ -24,6 +24,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberMapStruct memberMapStruct;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisService redisService;
 
     @Override
     public String checkNickname(String nickname) {
@@ -35,10 +36,10 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public String createMember(MemberDto memberDto, HttpSession session) {
-        String findEmail = (String) session.getAttribute(memberDto.getEmailCode());
+        String value = redisService.getValue(memberDto.getEmailCode());
 
-        if (!findEmail.equals(memberDto.getEmail()) || findEmail.equals("")) {
-            throw new RuntimeException("이메일 인증을 진행해주세요");
+        if (!value.equals(memberDto.getEmail()) || value.equals("")) {
+            throw new RuntimeException("이메일 정보가 일치하지 않습니다. 다시 인증을 진행해주세요");
         }
 
         if (!memberDto.isNicknameVerified()) {
