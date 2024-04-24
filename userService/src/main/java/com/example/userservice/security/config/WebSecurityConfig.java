@@ -1,7 +1,6 @@
 package com.example.userservice.security.config;
 
 import com.example.userservice.member.repository.MemberRepository;
-import com.example.userservice.member.repository.RefreshTokenRepository;
 import com.example.userservice.security.filter.CustomAuthenticationFilter;
 import com.example.userservice.security.handler.CustomAuthenticationFailureHandler;
 import com.example.userservice.security.handler.CustomAuthenticationSuccessHandler;
@@ -19,7 +18,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +25,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final CustomUserDetailService customUserDetailService;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final MemberRepository memberRepository;
     private final TokenUtil tokenUtil;
 
@@ -62,7 +59,7 @@ public class WebSecurityConfig {
 
     @Bean
     public CustomAuthenticationProvider customAuthenticationProvider() {
-        return new CustomAuthenticationProvider(customUserDetailService, bCryptPasswordEncoder(), refreshTokenRepository, memberRepository);
+        return new CustomAuthenticationProvider(customUserDetailService, bCryptPasswordEncoder(), memberRepository);
     }
 
     @Bean

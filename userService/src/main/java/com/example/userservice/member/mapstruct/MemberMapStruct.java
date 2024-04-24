@@ -14,15 +14,10 @@ import org.mapstruct.ReportingPolicy;
 public interface MemberMapStruct {
     MemberDto changeMemberDto(RequestMember requestMember);
     MemberDto changeMemberDto(RequestUpdate requestUpdate);
-
     @Mapping(target = "createAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "updateAt", expression = "java(java.time.LocalDateTime.now())")
-    @Mapping(target = "role", expression = "java(com.example.userservice.member.entity.Role.USER)")
     @Mapping(target = "memberUUID", expression = "java(java.util.UUID.randomUUID().toString())")
     Member changeEntity(MemberDto memberDto);
-
-    // 여기서
     MemberDto changeMemberDto(Member member);
-
     ResponseMember changeResponse(MemberDto memberDto);
 }

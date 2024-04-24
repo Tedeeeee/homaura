@@ -1,8 +1,5 @@
 package com.example.userservice.security.utils;
 
-import com.example.userservice.member.entity.RefreshToken;
-import com.example.userservice.member.repository.MemberRepository;
-import com.example.userservice.member.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +16,6 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 public class TokenUtil {
-    private final RefreshTokenRepository refreshTokenRepository;
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -105,14 +101,5 @@ public class TokenUtil {
         response.addHeader("RefreshToken", refreshToken);
 
         log.info("AccessToken, RefreshToken 데이터 전송 완료");
-    }
-
-    // refreshToken 저장하기
-    public void insertRefreshToken(String memberUUID, String refreshTokenValue) {
-        RefreshToken newRefreshToken = RefreshToken.builder()
-                .memberUUID(memberUUID)
-                .refreshToken(refreshTokenValue)
-                .build();
-        refreshTokenRepository.save(newRefreshToken);
     }
 }

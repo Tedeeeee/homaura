@@ -1,9 +1,7 @@
 package com.example.userservice.security.provider;
 
 import com.example.userservice.member.entity.Member;
-import com.example.userservice.member.entity.RefreshToken;
 import com.example.userservice.member.repository.MemberRepository;
-import com.example.userservice.member.repository.RefreshTokenRepository;
 import com.example.userservice.security.service.CustomUserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -18,7 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class CustomAuthenticationProvider implements AuthenticationProvider {
     private final CustomUserDetailService customUserDetailService;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final MemberRepository memberRepository;
 
     @Override
@@ -28,11 +25,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         UserDetails user = customUserDetailService.loadUserByUsername(username);
         Member member = memberRepository.findByMemberUUID(user.getUsername());
-        RefreshToken byMemberUUId = refreshTokenRepository.findByMemberUUID(member.getMemberUUID());
-
-        if (byMemberUUId != null) {
-            throw new RuntimeException("이미 접속중인 사용자입니다");
-        }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다");

@@ -36,7 +36,6 @@ public class MailServiceImpl implements MailService{
         mailDto.setTitle("homaura의 이메일 인증코드입니다");
         mailDto.setMessage("안녕하세요. homaura의 이메일 인증 코드입니다." + code + "를 입력해주세요");
         mailSend(mailDto);
-        session.setAttribute(code, email);
         redisService.setValues(code, email, Duration.ofMinutes(10));
         return code;
     }

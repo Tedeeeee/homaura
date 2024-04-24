@@ -50,15 +50,8 @@ public class Member {
 
     private LocalDateTime updateAt;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @Column(nullable = false)
     private String memberUUID;
-
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "member")
-//    private List<WishList> wishLists = new ArrayList<>();
 
     public void changePhone(String phone) {
         this.phone = phone;

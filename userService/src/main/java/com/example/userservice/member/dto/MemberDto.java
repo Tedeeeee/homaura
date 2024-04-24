@@ -1,9 +1,6 @@
 package com.example.userservice.member.dto;
 
-import com.example.userservice.member.vo.ProductInfo;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class MemberDto {
@@ -15,5 +12,4 @@ public class MemberDto {
     private boolean nicknameVerified;
     private String phone;
     private String address;
-    private List<ProductInfo> wishLists;
 }
