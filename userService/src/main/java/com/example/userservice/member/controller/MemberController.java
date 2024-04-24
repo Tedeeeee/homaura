@@ -11,6 +11,7 @@ import com.example.userservice.member.vo.ResponseMember;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class MemberController {
     private final MemberMapStruct memberMapStruct;
     private final MailService mailService;
     private final MemberService memberService;
+    private final Environment env;
 
     // 이메일 인증 ( 중복된 이메일이 있을때 가입 불가능 )
     @GetMapping("/validationEmail")

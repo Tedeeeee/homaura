@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/products")
+@RequestMapping("/")
 public class ProductController {
 
     private final ProductMapStruct productMapStruct;
@@ -51,7 +51,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productByName.map(productMapStruct::changeResponse));
     }
 
-    @GetMapping("/health_check")
+    @GetMapping("/healthCheck")
     public String status() {
         return String.valueOf("It's Working in User Service"
                 + ", port(local.server.port) = " + env.getProperty("local.server.port")
