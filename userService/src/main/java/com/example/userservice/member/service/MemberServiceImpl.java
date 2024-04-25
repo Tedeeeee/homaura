@@ -4,6 +4,7 @@ import com.example.userservice.member.dto.MemberDto;
 import com.example.userservice.member.entity.Member;
 import com.example.userservice.member.mapstruct.MemberMapStruct;
 import com.example.userservice.member.repository.MemberRepository;
+import com.example.userservice.member.vo.RequestCheck;
 import com.example.userservice.member.vo.RequestPassword;
 import com.example.userservice.member.vo.ResponseMember;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -23,8 +25,8 @@ public class MemberServiceImpl implements MemberService {
     private final RedisService redisService;
 
     @Override
-    public String checkNickname(String nickname) {
-        if (memberRepository.existsByNickname(nickname)) {
+    public String checkNickname(RequestCheck requestCheck) {
+        if (memberRepository.existsByNickname(requestCheck.getNickname())) {
             throw new RuntimeException("중복된 닉네임 입니다");
         }
         return "사용 가능한 닉네임입니다";
@@ -55,6 +57,7 @@ public class MemberServiceImpl implements MemberService {
         return "회원 가입을 축하드립니다";
     }
 
+    @Transactional
     @Override
     public ResponseMember updateMember(MemberDto memberDto) {
         Member member = memberRepository.findByEmail(memberDto.getEmail());
@@ -66,11 +69,12 @@ public class MemberServiceImpl implements MemberService {
         member.changeAddress(memberDto.getAddress());
         member.updateTime(LocalDateTime.now());
 
-        MemberDto newMemberDto = memberMapStruct.changeMemberDto(memberRepository.save(member));
+        MemberDto newMemberDto = memberMapStruct.changeMemberDto(member);
 
         return memberMapStruct.changeResponse(newMemberDto);
     }
 
+    @Transactional
     @Override
     public String updatePassword(RequestPassword requestPassword, HttpServletRequest request) {
         String memberUUID = request.getHeader("uuid");
@@ -90,7 +94,6 @@ public class MemberServiceImpl implements MemberService {
 
         member.changePassword(bCryptPasswordEncoder.encode(requestPassword.getNewPassword()));
         member.updateTime(LocalDateTime.now());
-        memberRepository.save(member);
 
         return "변경된 비밀번호로 다시 로그인해주세요";
     }
@@ -104,9 +107,7 @@ public class MemberServiceImpl implements MemberService {
             throw new RuntimeException("존재하지 않는 회원입니다");
         }
 
-        MemberDto memberDto = memberMapStruct.changeMemberDto(member);
-
         // 여기서 회원이 주문한 상품을 묶어서 전달해준다.
-        return memberDto;
+        return memberMapStruct.changeMemberDto(member);
     }
 }
