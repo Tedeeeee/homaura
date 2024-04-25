@@ -4,12 +4,14 @@ import com.example.productservice.product.dto.ProductDto;
 import com.example.productservice.product.entity.Product;
 import com.example.productservice.product.mapstruct.ProductMapStruct;
 import com.example.productservice.product.repository.ProductRepository;
+import com.example.productservice.product.vo.RequestContent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,4 +50,22 @@ public class ProductServiceImpl implements ProductService{
         Page<Product> pageBy = productRepository.findPageByNameContaining(productName, pageable);
         return pageBy.map(productMapStruct::changeDto);
     }
+
+    // internal 의 서비스
+    @Override
+    @Transactional
+    public void increaseCount(RequestContent requestContent) {
+        Product product = productRepository.findByProductUUID(requestContent.getProductUUID());
+
+        product.increaseStock(requestContent.getUnitCount());
+    }
+
+    @Override
+    @Transactional
+    public void decreaseCount(RequestContent requestContent) {
+        Product product = productRepository.findByProductUUID(requestContent.getProductUUID());
+
+        product.decreaseStock(requestContent.getUnitCount());
+    }
+
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 public class RequestOrder {
-    private List<Content> productUUIDs = new ArrayList<>();
+    private List<Content> products = new ArrayList<>();
 
     @NotNull(message = "정확한 주소를 작성해주세요")
     @Pattern(regexp = "^.{10,}$", message = "주소는 최소 10글자 이상이어야 합니다")

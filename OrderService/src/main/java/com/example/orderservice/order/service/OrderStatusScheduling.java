@@ -1,12 +1,16 @@
 package com.example.orderservice.order.service;
 
+import com.example.orderservice.order.client.ProductServiceClient;
+import com.example.orderservice.order.entity.Content;
 import com.example.orderservice.order.entity.Order;
+import com.example.orderservice.order.entity.OrderProduct;
 import com.example.orderservice.order.entity.Status;
 import com.example.orderservice.order.repository.OrderProductRepository;
 import com.example.orderservice.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -14,11 +18,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
-//@Component
+@Component
 @RequiredArgsConstructor
 public class OrderStatusScheduling {
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
+    private final ProductServiceClient productServiceClient;
 
     @Transactional
     @Scheduled(fixedRate = 10000, initialDelay = 3000)
@@ -32,14 +37,6 @@ public class OrderStatusScheduling {
             // 1. createAt와 updateAt의 시간 차이 계산
             long createMinute = Duration.between(order.getCreateAt(), LocalDateTime.now()).toMinutes();
             long updateMinute = Duration.between(order.getUpdateAt(), LocalDateTime.now()).toMinutes();
-
-/*
-            System.out.println("================================");
-            System.out.println("orderId = " + order.getId());
-            System.out.println("createMinute = " + createMinute);
-            System.out.println("updateMinute = " + updateMinute);
-            System.out.println("================================");
-*/
 
             // 2. 반품이 된 상품인지 확인, 결제가 D-day
             if (!order.getStatus().equals(Status.REFUNDING)) {
@@ -57,7 +54,7 @@ public class OrderStatusScheduling {
                 // 해당 주문에 묶인 물건의 재고를 원상 복구
                 if (updateMinute >= 1) {
                     order.transferStatus(5);
-//                    updateProduct(order);
+                    updateProduct(order);
                 }
             }
 
@@ -65,14 +62,12 @@ public class OrderStatusScheduling {
         }
     }
 
-//    @Transactional
-//    public void updateProduct(Order order) {
-//        List<OrderProduct> orderProductList = orderProductRepository.findByOrder(order);
-//
-//        for (OrderProduct orderProduct : orderProductList) {
-//            Product fixProduct = productRepository.findByProductUUID(orderProduct.getProduct().getProductUUID());
-//            fixProduct.increaseStock(orderProduct.getUnitCount());
-//            productRepository.save(fixProduct);
-//        }
-//    }
+    @Transactional
+    public void updateProduct(Order order) {
+        List<OrderProduct> orderProductList = orderProductRepository.findByOrder(order);
+
+        for (OrderProduct orderProduct : orderProductList) {
+            productServiceClient.increaseCount(new Content(orderProduct.getProductUUID(), orderProduct.getUnitCount()));
+        }
+    }
 }

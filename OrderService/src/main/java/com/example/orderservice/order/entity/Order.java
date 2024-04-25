@@ -23,6 +23,7 @@ public class Order {
     private Long id;
 
     private String orderUUID;
+    private String memberUUID;
 
     private String deliveryAddress;
     private String deliveryPhone;

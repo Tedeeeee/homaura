@@ -2,13 +2,14 @@ package com.example.orderservice.order.service;
 
 
 import com.example.orderservice.order.dto.OrderDto;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
 public interface OrderService {
-    int createOrder(OrderDto orderDto);
+    int createOrder(OrderDto orderDto, HttpServletRequest request);
 
-    List<OrderDto> getOrderList();
+    List<OrderDto> getOrderList(HttpServletRequest request);
 
     String deleteOrder(String orderUUID);
 
