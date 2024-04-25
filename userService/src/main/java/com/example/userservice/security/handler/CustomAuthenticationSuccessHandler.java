@@ -30,7 +30,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Member member = memberRepository.findByMemberUUID(memberUUID);
 
         if (member != null) {
-            tokenUtil.insertRefreshToken(member.getMemberUUID(), refreshToken);
             tokenUtil.sendAccessAndRefreshToken(response, accessToken, refreshToken);
         }
 

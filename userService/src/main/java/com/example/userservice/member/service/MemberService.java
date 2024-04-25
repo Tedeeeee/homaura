@@ -10,8 +10,6 @@ public interface MemberService {
     String createMember(MemberDto memberDto, HttpSession session);
     String checkNickname(String nickname);
     ResponseMember updateMember(MemberDto memberDto);
-    String updatePassword(RequestPassword requestPassword);
-    String logout(HttpServletRequest request);
-
+    String updatePassword(RequestPassword requestPassword,HttpServletRequest request);
     MemberDto getUser(HttpServletRequest request);
 }
