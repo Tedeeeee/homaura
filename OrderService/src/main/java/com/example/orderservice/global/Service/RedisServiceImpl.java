@@ -7,13 +7,19 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@RequiredArgsConstructor
 public class RedisServiceImpl implements RedisService{
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private final HashOperations<String, String, String> hashOperations;
+
+    public RedisServiceImpl(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+        this.hashOperations = redisTemplate.opsForHash();
+    }
 
     @Override
     public void setValues(String key, String value) {
@@ -56,4 +62,8 @@ public class RedisServiceImpl implements RedisService{
         redisTemplate.opsForHash().increment(key, field, Long.parseLong(increment));
     }
 
+    @Override
+    public Map<String, String> getAllValues(String key) {
+        return hashOperations.entries(key);
+    }
 }

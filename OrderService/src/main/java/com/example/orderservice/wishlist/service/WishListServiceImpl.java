@@ -8,12 +8,34 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class WishListServiceImpl implements WishListService{
 
     private final RedisService redisService;
     private final ProductServiceClient productServiceClient;
+
+    @Override
+    public List<AddWishListForm> getWishList(HttpServletRequest request) {
+        String uuid = request.getHeader("uuid");
+
+        Map<String, String> allValues = redisService.getAllValues(uuid);
+
+        List<AddWishListForm> list = new ArrayList<>();
+        for (String s : allValues.keySet()) {
+            if (allValues.get(s).equals("0")) {
+                redisService.deleteField(uuid, s);
+                continue;
+            }
+            list.add(new AddWishListForm(s, allValues.get(s)));
+        }
+
+        return list;
+    }
 
     @Override
     public String putList(AddWishListForm addWishListForm, HttpServletRequest request) {
