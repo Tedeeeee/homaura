@@ -1,11 +1,13 @@
-package com.example.orderservice.order.service;
+package com.example.orderservice.global.Service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -36,4 +38,22 @@ public class RedisServiceImpl implements RedisService{
     public void deleteValue(String key) {
         redisTemplate.delete(key);
     }
+
+    @Override
+    public void deleteField(String key, String field) {
+        redisTemplate.opsForHash().delete(key, field);
+    }
+
+    @Override
+    public void hsetValues(String key, String field, String value) {
+        HashOperations<String, String, String> values = redisTemplate.opsForHash();
+        values.put(key, field, value);
+        redisTemplate.expire(key, 10, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public void updateField(String key, String field, String increment) {
+        redisTemplate.opsForHash().increment(key, field, Long.parseLong(increment));
+    }
+
 }

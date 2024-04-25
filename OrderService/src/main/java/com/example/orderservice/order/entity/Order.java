@@ -1,6 +1,5 @@
 package com.example.orderservice.order.entity;
 
-import com.shoppingmall.homaura.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,10 +23,6 @@ public class Order {
     private Long id;
 
     private String orderUUID;
-
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
 
     private String deliveryAddress;
     private String deliveryPhone;
