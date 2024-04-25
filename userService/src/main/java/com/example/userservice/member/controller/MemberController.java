@@ -4,10 +4,7 @@ import com.example.userservice.member.dto.MemberDto;
 import com.example.userservice.member.mapstruct.MemberMapStruct;
 import com.example.userservice.member.service.MailService;
 import com.example.userservice.member.service.MemberService;
-import com.example.userservice.member.vo.RequestMember;
-import com.example.userservice.member.vo.RequestPassword;
-import com.example.userservice.member.vo.RequestUpdate;
-import com.example.userservice.member.vo.ResponseMember;
+import com.example.userservice.member.vo.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -26,21 +23,21 @@ public class MemberController {
     private final MemberService memberService;
 
     // 이메일 인증 ( 중복된 이메일이 있을때 가입 불가능 )
-    @GetMapping("/validationEmail")
-    public ResponseEntity<String> sendEmail(@RequestParam String mail, HttpSession session) {
-        return ResponseEntity.status(HttpStatus.OK).body(mailService.sendEmail(mail, session));
+    @PostMapping("/validationEmail")
+    public ResponseEntity<String> sendEmail(@Valid @RequestBody RequestCheck requestCheck) {
+        return ResponseEntity.status(HttpStatus.OK).body(mailService.sendEmail(requestCheck));
     }
 
     // 인증 코드 확인
-    @GetMapping("/checkCode")
-    public ResponseEntity<String> checkCode(@RequestParam String code) {
-        return ResponseEntity.status(HttpStatus.OK).body(mailService.checkCode(code));
+    @PostMapping("/checkCode")
+    public ResponseEntity<String> checkCode(@Valid @RequestBody RequestCheck requestCheck) {
+        return ResponseEntity.status(HttpStatus.OK).body(mailService.checkCode(requestCheck));
     }
 
     // 닉네임 중복 확인
-    @GetMapping("/checkNickname")
-    public ResponseEntity<String> checkNickname(@RequestParam String nickname) {
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.checkNickname(nickname));
+    @PostMapping("/checkNickname")
+    public ResponseEntity<String> checkNickname(@Valid @RequestBody RequestCheck requestCheck) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.checkNickname(requestCheck));
     }
 
     // 회원 가입

@@ -1,10 +1,10 @@
 package com.example.userservice.member.service;
 
 
-import jakarta.servlet.http.HttpSession;
+import com.example.userservice.member.vo.RequestCheck;
 
 public interface MailService {
-    String sendEmail(String email, HttpSession session);
+    String sendEmail(RequestCheck requestCheck);
 
-    String checkCode(String checkCode);
+    String checkCode(RequestCheck requestCheck);
 }
