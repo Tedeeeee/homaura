@@ -14,5 +14,5 @@ public class ResponseOrder {
     private String deliveryPhone;
     private String totalPrice;
     private Status status;
-    private List<Content> productUUIDs;
+    private List<Content> products;
 }

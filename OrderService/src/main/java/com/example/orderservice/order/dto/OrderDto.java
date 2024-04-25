@@ -14,5 +14,5 @@ public class OrderDto {
     private String deliveryPhone;
     private Long totalPrice;
     private Status status;
-    private List<Content> productUUIDs = new ArrayList<>();
+    private List<Content> products = new ArrayList<>();
 }

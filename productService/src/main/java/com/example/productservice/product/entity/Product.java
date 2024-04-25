@@ -30,8 +30,6 @@ public class Product {
     public void increaseStock(int count) {
         this.stock += count;
     }
+    public void decreaseStock(int count) { this.stock -= count; }
 
-    public void decreaseStock(int count) {
-        this.stock -= count;
-    }
 }

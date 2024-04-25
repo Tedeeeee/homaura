@@ -14,4 +14,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     void deleteById(Long orderId);
 
+    List<Order> findByMemberUUID(String memberUUID);
+
 }

@@ -21,6 +21,7 @@ public class OrderProduct {
     @JoinColumn(name = "orderUUID")
     private Order order;
 
+    private String productUUID;
 
     private int unitCount;
 }
