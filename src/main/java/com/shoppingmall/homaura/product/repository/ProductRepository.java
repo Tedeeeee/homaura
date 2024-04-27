@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select p from Product p where p.productUUID = :productUUID")
+    @Query("select p from Product p where p.productUUID=:productUUID")
     Product findByProductUUIDForUpdate(String productUUID);
 
     Product findByProductUUID(String productUUID);

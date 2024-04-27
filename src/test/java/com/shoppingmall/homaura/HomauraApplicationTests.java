@@ -46,6 +46,7 @@ class HomauraApplicationTests {
         // 물품
         Product product = new Product(1L, "e03752e0-1c38-42f6-9eee-162df341318d", "예감", 1000, 100, "윤태식", LocalDateTime.now());
         productRepository.save(product);
+        System.out.println("product = " + product.getStock());
 
         // 사용자
         Member member =

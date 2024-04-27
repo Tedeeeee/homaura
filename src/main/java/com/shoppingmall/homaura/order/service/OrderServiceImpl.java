@@ -14,10 +14,8 @@ import com.shoppingmall.homaura.product.entity.Product;
 import com.shoppingmall.homaura.product.repository.ProductRepository;
 import com.shoppingmall.homaura.security.utils.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.Synchronized;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -64,6 +62,8 @@ public class OrderServiceImpl implements OrderService {
                 throw new RuntimeException("재고가 부족하여 주문을 생성할 수 없습니다");
             }
 
+            totalPrice += (long) product.getPrice() * content.getUnitCount();
+
             product.decreaseStock(content.getUnitCount());
 
             OrderProduct orderProduct = OrderProduct.builder()
@@ -72,13 +72,12 @@ public class OrderServiceImpl implements OrderService {
                     .unitCount(content.getUnitCount())
                     .build();
             orderProductRepository.save(orderProduct);
-
-            totalPrice += (long) product.getPrice() * content.getUnitCount();
         }
 
         order.setTotalPrice(totalPrice);
 
         orderRepository.save(order);
+
         return 1;
     }
 
