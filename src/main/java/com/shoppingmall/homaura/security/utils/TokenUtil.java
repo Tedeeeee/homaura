@@ -50,7 +50,7 @@ public class TokenUtil {
     // accessToken 만료기간
     private static Date createAccessTokenExpiredDate() {
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.MINUTE, 5);
+        c.add(Calendar.MINUTE, 50);
         return c.getTime();
     }
 

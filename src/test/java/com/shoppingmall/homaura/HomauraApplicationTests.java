@@ -93,8 +93,8 @@ class HomauraApplicationTests {
 
         //then
         assertAll(
-                () -> assertThat(successCount.get()).isEqualTo(5),
-                () -> assertThat(failCount.get()).isEqualTo(5)
+                () -> assertThat(successCount.get()).isEqualTo(50),
+                () -> assertThat(failCount.get()).isEqualTo(50)
         );
     }
 
