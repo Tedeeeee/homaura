@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 public interface ProductServiceClient {
 
     @GetMapping("/internal/{productUUID}")
-    ResponseProduct findProduct(@PathVariable String productUUID);
+    ResponseProduct existProduct(@PathVariable String productUUID);
 
     @PutMapping("/internal/increase")
     void increaseCount(@RequestBody Content content);
     @PutMapping("/internal/decrease")
-    void decreaseCount(@RequestBody Content content);
+    ResponseProduct decreaseCount(@RequestBody Content content);
 }

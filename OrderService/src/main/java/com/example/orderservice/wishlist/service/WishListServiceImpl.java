@@ -41,7 +41,7 @@ public class WishListServiceImpl implements WishListService{
     public String putList(AddWishListForm addWishListForm, HttpServletRequest request) {
         String uuid = request.getHeader("uuid");
         // 상품이 존재하는지 확인
-        ResponseProduct responseProduct = productServiceClient.findProduct(addWishListForm.getProductUUID());
+        ResponseProduct responseProduct = productServiceClient.existProduct(addWishListForm.getProductUUID());
 
         if (responseProduct == null) {
             throw new RuntimeException("존재하지 않는 상품입니다");

@@ -31,7 +31,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public int createOrder(OrderDto orderDto, HttpServletRequest request) {
-        String uuid = request.getHeader("uuid");
+        // String uuid = request.getHeader("uuid");
+        // 테스트 용
+        String uuid = orderDto.getMemberUUID();
 
         Order order = Order.builder()
                 .orderUUID(UUID.randomUUID().toString())
@@ -43,32 +45,23 @@ public class OrderServiceImpl implements OrderService {
                 .updateAt(LocalDateTime.now())
                 .build();
 
-        order.setTotalPrice(getTotalPrice(orderDto));
-
-        orderRepository.save(order);
-
+        long totalPrice = 0L;
         for (Content content : orderDto.getProducts()) {
-            ResponseProduct product = productServiceClient.findProduct(content.getProductUUID());
+            ResponseProduct product = productServiceClient.decreaseCount(content);
 
-            if (product == null) {
-                throw new IllegalArgumentException("제품을 찾을 수 없습니다");
-            }
-
-            if (product.getStock() < content.getUnitCount()) {
-                throw new RuntimeException("재고가 부족하여 주문을 생성할 수 없습니다");
-            }
-
-            // 해당 상품의 데이터가 줄어야 한다.
-            productServiceClient.decreaseCount(content);
-
-            // 연관관계 매핑을 해야하는가?
             OrderProduct orderProduct = OrderProduct.builder()
                     .order(order)
                     .productUUID(content.getProductUUID())
                     .unitCount(content.getUnitCount())
                     .build();
             orderProductRepository.save(orderProduct);
+
+            totalPrice += (long) product.getPrice() * content.getUnitCount();
         }
+        order.setTotalPrice(totalPrice);
+
+        orderRepository.save(order);
+
         return 1;
     }
 
@@ -143,17 +136,5 @@ public class OrderServiceImpl implements OrderService {
         }
         orderDto.setProducts(contents);
         return orderDto;
-    }
-
-    private Long getTotalPrice(OrderDto orderDto) {
-        long totalPrice = 0L;
-        for (Content content : orderDto.getProducts()) {
-            ResponseProduct product = productServiceClient.findProduct(content.getProductUUID());
-            if (product == null) {
-                throw new RuntimeException("제품을 찾을 수 없습니다, getTotalPrice");
-            }
-            totalPrice += (long) product.getPrice() * content.getUnitCount();
-        }
-        return totalPrice;
     }
 }
