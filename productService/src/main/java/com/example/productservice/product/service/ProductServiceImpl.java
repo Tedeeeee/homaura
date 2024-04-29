@@ -53,19 +53,10 @@ public class ProductServiceImpl implements ProductService{
 
     // internal 의 서비스
     @Override
-    @Transactional
     public void increaseCount(RequestContent requestContent) {
         Product product = productRepository.findByProductUUID(requestContent.getProductUUID());
 
         product.increaseStock(requestContent.getUnitCount());
-    }
-
-    @Override
-    @Transactional
-    public void decreaseCount(RequestContent requestContent) {
-        Product product = productRepository.findByProductUUID(requestContent.getProductUUID());
-
-        product.decreaseStock(requestContent.getUnitCount());
     }
 
 }

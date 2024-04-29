@@ -25,17 +25,15 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                                         Authentication authentication) throws IOException, ServletException {
         String memberUUID = extractUsername(authentication);
         String accessToken = tokenUtil.createAccessToken(memberUUID);
-        String refreshToken = tokenUtil.createRefreshToken();
 
         Member member = memberRepository.findByMemberUUID(memberUUID);
 
         if (member != null) {
-            tokenUtil.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+            tokenUtil.sendAccessAndRefreshToken(response, accessToken);
         }
 
         log.info("로그인에 성공하였습니다. UUID : {}", memberUUID);
         log.info("로그인에 성공하였습니다. AccessToken : {}", accessToken);
-        log.info("로그인에 성공하였습니다. RefreshToken : {}", refreshToken);
     }
 
     private String extractUsername(Authentication authentication) {

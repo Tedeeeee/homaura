@@ -39,7 +39,6 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         return (((exchange, chain) -> {
 
             ServerHttpRequest request = exchange.getRequest();
-            ServerHttpResponse response;
 
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 return onError(exchange, "토큰이 존재하지 않습니다", HttpStatus.UNAUTHORIZED);

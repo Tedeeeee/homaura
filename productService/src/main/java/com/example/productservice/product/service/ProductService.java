@@ -14,5 +14,4 @@ public interface ProductService {
 
     // internal 의 서비스
     void increaseCount(RequestContent requestContent);
-    void decreaseCount(RequestContent requestContent);
 }

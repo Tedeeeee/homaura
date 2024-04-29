@@ -93,12 +93,11 @@ public class TokenUtil {
         }
     }
 
-    public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
+    public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.addHeader("AccessToken", accessToken);
-        response.addHeader("RefreshToken", refreshToken);
 
         log.info("AccessToken, RefreshToken 데이터 전송 완료");
     }
