@@ -10,8 +10,11 @@ import com.example.orderservice.order.entity.Status;
 import com.example.orderservice.order.mapstruct.OrderMapStruct;
 import com.example.orderservice.order.repository.OrderProductRepository;
 import com.example.orderservice.order.repository.OrderRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
@@ -30,10 +34,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
+    @Retry(name = "retry", fallbackMethod = "retryFallback")
+    @CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
     public int createOrder(OrderDto orderDto, HttpServletRequest request) {
-        // String uuid = request.getHeader("uuid");
+        String uuid = request.getHeader("uuid");
         // 테스트 용
-        String uuid = orderDto.getMemberUUID();
+        //String uuid = orderDto.getMemberUUID();
 
         Order order = Order.builder()
                 .orderUUID(UUID.randomUUID().toString())
@@ -63,6 +69,18 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
 
         return 1;
+    }
+
+    private int fallback(OrderDto orderDto, HttpServletRequest request, Throwable t) {
+        log.info("FallBack 이 사용되었다.");
+        log.error("FallBack : " + t.getMessage());
+        throw new RuntimeException("상품 주문 실패");
+    }
+
+    private int retryFallback(OrderDto orderDto, HttpServletRequest request, Throwable t) {
+        log.info("retry 가 사용되었다.");
+        log.error("retry : " + t.getMessage());
+        throw new RuntimeException("상품 주문 실패");
     }
 
     @Override
@@ -137,4 +155,6 @@ public class OrderServiceImpl implements OrderService {
         orderDto.setProducts(contents);
         return orderDto;
     }
+
+
 }
