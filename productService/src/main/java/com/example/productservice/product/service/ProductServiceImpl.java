@@ -1,10 +1,12 @@
 package com.example.productservice.product.service;
 
 import com.example.productservice.product.dto.ProductDto;
+import com.example.productservice.product.entity.Content;
 import com.example.productservice.product.entity.Product;
 import com.example.productservice.product.mapstruct.ProductMapStruct;
 import com.example.productservice.product.repository.ProductRepository;
 import com.example.productservice.product.vo.RequestContent;
+import com.example.productservice.product.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -58,5 +60,4 @@ public class ProductServiceImpl implements ProductService{
 
         product.increaseStock(requestContent.getUnitCount());
     }
-
 }
