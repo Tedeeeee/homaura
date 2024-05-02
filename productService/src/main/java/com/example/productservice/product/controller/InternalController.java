@@ -31,13 +31,13 @@ public class InternalController {
     @Transactional
     @GetMapping("/{productUUID}")
     public ResponseProduct existProduct(@PathVariable String productUUID) {
-        Product byProductUUID = productRepository.findByProductUUIDForUpdate(productUUID);
+        Product product = productRepository.findByProductUUID(productUUID);
 
-        if (byProductUUID == null) {
-            return null;
+        if (product == null) {
+            throw new RuntimeException("존재하지 않는 상품입니다");
         }
 
-        ProductDto productDto = productMapStruct.changeDto(byProductUUID);
+        ProductDto productDto = productMapStruct.changeDto(product);
         return productMapStruct.changeResponse(productDto);
     }
 

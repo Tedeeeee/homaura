@@ -1,4 +1,4 @@
-package com.example.orderservice.wishlist.vo;
+package com.example.paymentservice.payment.vo;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
