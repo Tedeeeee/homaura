@@ -34,8 +34,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-//    @Retry(name = "retry", fallbackMethod = "retryFallback")
-//    @CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
+    @Retry(name = "retry", fallbackMethod = "retryFallback")
+    @CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
     public int createOrder(OrderDto orderDto, HttpServletRequest request) {
         //String uuid = request.getHeader("uuid");
         // 테스트 용
@@ -155,6 +155,4 @@ public class OrderServiceImpl implements OrderService {
         orderDto.setProducts(contents);
         return orderDto;
     }
-
-
 }

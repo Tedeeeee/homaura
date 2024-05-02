@@ -14,7 +14,6 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.redisson.api.RedissonClient;
 
 import java.util.concurrent.TimeUnit;
 
