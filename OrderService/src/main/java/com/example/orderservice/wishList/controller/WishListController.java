@@ -1,7 +1,7 @@
-package com.example.paymentservice.payment.controller;
+package com.example.orderservice.wishList.controller;
 
-import com.example.paymentservice.payment.service.WishListService;
-import com.example.paymentservice.payment.vo.AddWishListForm;
+import com.example.orderservice.wishList.service.WishListService;
+import com.example.orderservice.wishList.vo.AddWishListForm;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +28,6 @@ public class WishListController {
     @PostMapping("")
     public ResponseEntity<String> putWishList(@Valid @RequestBody AddWishListForm addWishListForm, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(wishListService.putList(addWishListForm, request));
-    }
-
-    // 장바구니가 아닌 바로 예약 상품으로 들어간 상황
-    @PostMapping("/unique")
-    public ResponseEntity<String> putUnique(@RequestBody AddWishListForm addWishListForm, HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(wishListService.putUniqueItem(addWishListForm, request));
     }
 
     // 특정 상품 삭제

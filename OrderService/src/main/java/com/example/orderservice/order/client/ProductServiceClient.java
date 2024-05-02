@@ -17,7 +17,4 @@ public interface ProductServiceClient {
 
     @PutMapping("/internal/decrease")
     ResponseProduct decreaseCount(@RequestBody Content content);
-
-    @GetMapping("/internal/errorful/case1")
-    ResponseEntity<String> case1();
 }

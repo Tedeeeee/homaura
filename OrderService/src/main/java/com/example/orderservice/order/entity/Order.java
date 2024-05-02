@@ -32,6 +32,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Enumerated(EnumType.STRING)
+    private Status payment;
+
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 
@@ -55,5 +58,9 @@ public class Order {
 
     public void updateTime() {
         this.updateAt = LocalDateTime.now();
+    }
+    public void changePaymentStatus() {
+        this.status = Status.POSSIBLE;
+        this.payment = Status.DONE;
     }
 }

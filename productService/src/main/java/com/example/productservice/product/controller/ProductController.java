@@ -1,6 +1,7 @@
 package com.example.productservice.product.controller;
 
 import com.example.productservice.product.dto.ProductDto;
+import com.example.productservice.product.entity.Content;
 import com.example.productservice.product.mapstruct.ProductMapStruct;
 import com.example.productservice.product.service.ProductService;
 import com.example.productservice.product.vo.RequestProduct;
@@ -51,12 +52,10 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productByName.map(productMapStruct::changeResponse));
     }
 
-    @GetMapping("/healthCheck")
-    public String status() {
-        return String.valueOf("It's Working in User Service"
-                + ", port(local.server.port) = " + env.getProperty("local.server.port")
-                + ", port(server.port) = " + env.getProperty("server.port")
-                + ", token secret = " + env.getProperty("token.secret")
-                + ", token expiration time = " + env.getProperty("token.expiration_time"));
+    // 선착순 물건이라 재고를 미리 내림
+    @PostMapping("/unique")
+    public void decreaseItem(@RequestBody Content content) {
+        productService.decreaseCount(content);
     }
+
 }

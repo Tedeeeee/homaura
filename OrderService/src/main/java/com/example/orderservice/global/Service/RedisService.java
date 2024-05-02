@@ -8,7 +8,7 @@ public interface RedisService {
 
     void setValues(String key, String value, Duration duration);
 
-    void hsetValues(String key, String field, String value);
+    void hSetValues(String key, String field, String value);
 
     String getValue(String key);
 

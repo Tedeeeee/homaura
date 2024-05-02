@@ -42,4 +42,16 @@ public class OrderController {
     public ResponseEntity<String> refundOrder(@RequestParam String orderUUID) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.refundOrder(orderUUID));
     }
+
+    // 예약 구매 메소드 처리
+    @PostMapping("/unique")
+    public ResponseEntity<ResponseOrder> createUniqueOrder(@Valid @RequestBody RequestOrder requestOrder, HttpServletRequest request) {
+        OrderDto orderDto = orderMapStruct.changeDto(requestOrder);
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderMapStruct.changeResponse(orderService.createUniqueOrder(orderDto, request)));
+    }
+
+    @GetMapping("/statusPayment")
+    public ResponseEntity<Integer> changePayment(@RequestParam String orderUUID) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.changePayment(orderUUID));
+    }
 }

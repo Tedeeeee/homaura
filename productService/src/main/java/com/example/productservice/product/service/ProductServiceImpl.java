@@ -6,9 +6,10 @@ import com.example.productservice.product.entity.Product;
 import com.example.productservice.product.entity.Status;
 import com.example.productservice.product.mapstruct.ProductMapStruct;
 import com.example.productservice.product.repository.ProductRepository;
-import com.example.productservice.product.vo.RequestContent;
 import com.example.productservice.product.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class ProductServiceImpl implements ProductService{
 
     private final ProductMapStruct productMapStruct;
     private final ProductRepository productRepository;
+    private final RedissonClient redissonClient;
 
     @Override
     public int createProduct(ProductDto productDto) {
@@ -63,11 +66,68 @@ public class ProductServiceImpl implements ProductService{
         return pageBy.map(productMapStruct::changeDto);
     }
 
+
+
     // internal 의 서비스
     @Override
-    public void increaseCount(RequestContent requestContent) {
-        Product product = productRepository.findByProductUUID(requestContent.getProductUUID());
+    public ResponseProduct increaseCount(Content content) {
+        RLock lock = redissonClient.getLock(content.getProductUUID());
 
-        product.increaseStock(requestContent.getUnitCount());
+        try{
+            boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
+            if (!available) {
+                throw new RuntimeException("Lock 획득 실패!");
+            }
+            Product product = productRepository.findByProductUUID(content.getProductUUID());
+
+            if (product == null) {
+                throw new IllegalArgumentException("제품을 찾을 수 없습니다");
+            }
+
+            if (product.getStock() < content.getUnitCount()) {
+                throw new RuntimeException("재고가 부족하여 주문을 생성할 수 없습니다");
+            }
+
+            product.increaseStock(content.getUnitCount());
+
+            productRepository.save(product);
+
+            return productMapStruct.changeResponse(productMapStruct.changeDto(product));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public ResponseProduct decreaseCount(Content content) {
+        RLock lock = redissonClient.getLock(content.getProductUUID());
+
+        try{
+            boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
+            if (!available) {
+                throw new RuntimeException("Lock 획득 실패!");
+            }
+            Product product = productRepository.findByProductUUID(content.getProductUUID());
+
+            if (product == null) {
+                throw new IllegalArgumentException("제품을 찾을 수 없습니다");
+            }
+
+            if (product.getStock() < content.getUnitCount()) {
+                throw new RuntimeException("재고가 부족하여 주문을 생성할 수 없습니다");
+            }
+
+            product.decreaseStock(content.getUnitCount());
+
+            productRepository.save(product);
+
+            return productMapStruct.changeResponse(productMapStruct.changeDto(product));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            lock.unlock();
+        }
     }
 }

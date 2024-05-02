@@ -7,10 +7,8 @@ import com.example.productservice.product.mapstruct.ProductMapStruct;
 import com.example.productservice.product.repository.ProductRepository;
 import com.example.productservice.product.repository.RedisLockRepository;
 import com.example.productservice.product.service.ProductService;
-import com.example.productservice.product.vo.RequestContent;
 import com.example.productservice.product.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
-import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +23,6 @@ public class InternalController {
     private final ProductRepository productRepository;
     private final ProductMapStruct productMapStruct;
     private final ProductService productService;
-    private final RedisLockRepository redisLockRepository;
-    private final RedissonClient redissonClient;
 
     @Transactional
     @GetMapping("/{productUUID}")
@@ -42,8 +38,13 @@ public class InternalController {
     }
 
     @PutMapping("/increase")
-    public void increaseProductCount(@RequestBody RequestContent requestContent) {
-        productService.increaseCount(requestContent);
+    public ResponseProduct increaseProductCount(@RequestBody Content content) {
+        return productService.increaseCount(content);
+    }
+
+    @PutMapping("/decrease")
+    public ResponseProduct decreaseProductCount(@RequestBody Content content) {
+        return productService.decreaseCount(content);
     }
 
     // Pessimistic Lock
@@ -94,35 +95,6 @@ public class InternalController {
 //        }
 //    }
 
-    @PutMapping("/decrease")
-    public ResponseProduct decreaseProductCount(@RequestBody Content content) {
-        RLock lock = redissonClient.getLock(content.getProductUUID());
 
-        try{
-            boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
-            if (!available) {
-                throw new RuntimeException("Lock 획득 실패!");
-            }
-            Product product = productRepository.findByProductUUID(content.getProductUUID());
-
-            if (product == null) {
-                throw new IllegalArgumentException("제품을 찾을 수 없습니다");
-            }
-
-            if (product.getStock() < content.getUnitCount()) {
-                throw new RuntimeException("재고가 부족하여 주문을 생성할 수 없습니다");
-            }
-
-            product.decreaseStock(content.getUnitCount());
-
-            productRepository.save(product);
-
-            return productMapStruct.changeResponse(productMapStruct.changeDto(product));
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            lock.unlock();
-        }
-    }
 }
 

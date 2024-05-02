@@ -51,7 +51,7 @@ public class RedisServiceImpl implements RedisService{
     }
 
     @Override
-    public void hsetValues(String key, String field, String value) {
+    public void hSetValues(String key, String field, String value) {
         HashOperations<String, String, String> values = redisTemplate.opsForHash();
         values.put(key, field, value);
         redisTemplate.expire(key, 10, TimeUnit.MINUTES);

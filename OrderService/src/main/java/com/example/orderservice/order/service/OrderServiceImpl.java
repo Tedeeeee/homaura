@@ -47,6 +47,7 @@ public class OrderServiceImpl implements OrderService {
                 .deliveryAddress(orderDto.getDeliveryAddress())
                 .deliveryPhone(orderDto.getDeliveryPhone())
                 .status(Status.POSSIBLE)
+                .payment(Status.READY)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
                 .build();
@@ -154,5 +155,54 @@ public class OrderServiceImpl implements OrderService {
         }
         orderDto.setProducts(contents);
         return orderDto;
+    }
+
+    // 예약 구매 서비스
+    @Override
+    @Transactional
+    public OrderDto createUniqueOrder(OrderDto orderDto, HttpServletRequest request) {
+        //String uuid = request.getHeader("uuid");
+        // 테스트 용
+        String uuid = orderDto.getMemberUUID();
+
+        Order order = Order.builder()
+                .orderUUID(UUID.randomUUID().toString())
+                .memberUUID(uuid)
+                .deliveryAddress(orderDto.getDeliveryAddress())
+                .deliveryPhone(orderDto.getDeliveryPhone())
+                .payment(Status.READY)
+                .createAt(LocalDateTime.now())
+                .updateAt(LocalDateTime.now())
+                .build();
+
+        orderRepository.save(order);
+
+        long totalPrice = 0L;
+        for (Content content : orderDto.getProducts()) {
+            ResponseProduct product = productServiceClient.existProduct(content.getProductUUID());
+
+            OrderProduct orderProduct = OrderProduct.builder()
+                    .order(order)
+                    .productUUID(content.getProductUUID())
+                    .unitCount(content.getUnitCount())
+                    .build();
+            orderProductRepository.save(orderProduct);
+
+            totalPrice += (long) product.getPrice() * content.getUnitCount();
+        }
+        order.setTotalPrice(totalPrice);
+
+        OrderDto ordDto = orderMapStruct.changeDto(order);
+        ordDto.setProducts(orderDto.getProducts());
+
+        return ordDto;
+    }
+
+    @Override
+    @Transactional
+    public int changePayment(String orderUUID) {
+        Order order = orderRepository.findByOrderUUID(orderUUID);
+        order.changePaymentStatus();
+        return 1;
     }
 }

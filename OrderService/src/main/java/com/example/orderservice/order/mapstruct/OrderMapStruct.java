@@ -14,6 +14,7 @@ import java.util.List;
 public interface OrderMapStruct {
     OrderDto changeDto(RequestOrder requestOrder);
     OrderDto changeDto(Order order);
-
     List<ResponseOrder> changeResponseList(List<OrderDto> orderDto);
+
+    ResponseOrder changeResponse(OrderDto orderDto);
 }
