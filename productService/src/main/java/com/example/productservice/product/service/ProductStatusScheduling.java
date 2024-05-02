@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -20,6 +19,7 @@ import java.util.List;
 public class ProductStatusScheduling {
 
     private final ProductRepository productRepository;
+    private final RedisService redisService;
 
     @Transactional
     @Scheduled(cron = "0 */1 * * * *")
@@ -30,12 +30,12 @@ public class ProductStatusScheduling {
         for (Product product : products) {
             if (product.getStatus() == Status.CLOSE) {
                 LocalDateTime reservationTime = product.getReservationTime();
-                System.out.println("reservationTime = " + reservationTime);
-                System.out.println("now = " + now);
 
                 if (reservationTime.isEqual(now)) {
                     product.changeStatus();
                     productRepository.save(product);
+
+                    redisService.setValue(product.getProductUUID(), String.valueOf(product.getStock()));
                 }
             }
         }
