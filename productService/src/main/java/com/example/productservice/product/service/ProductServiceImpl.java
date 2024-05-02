@@ -3,6 +3,7 @@ package com.example.productservice.product.service;
 import com.example.productservice.product.dto.ProductDto;
 import com.example.productservice.product.entity.Content;
 import com.example.productservice.product.entity.Product;
+import com.example.productservice.product.entity.Status;
 import com.example.productservice.product.mapstruct.ProductMapStruct;
 import com.example.productservice.product.repository.ProductRepository;
 import com.example.productservice.product.vo.RequestContent;
@@ -15,6 +16,11 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService{
@@ -24,8 +30,12 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public int createProduct(ProductDto productDto) {
+        if (productDto.getReservationTime() != null) {
+            productDto.setStatus(Status.CLOSE);
+        }
         Product product = productMapStruct.changeEntity(productDto);
         productRepository.save(product);
+
         return 1;
     }
 
