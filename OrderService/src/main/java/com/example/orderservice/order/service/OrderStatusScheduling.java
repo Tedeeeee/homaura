@@ -62,7 +62,6 @@ public class OrderStatusScheduling {
         }
     }
 
-    @Transactional
     public void updateProduct(Order order) {
         List<OrderProduct> orderProductList = orderProductRepository.findByOrder(order);
 

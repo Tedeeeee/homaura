@@ -1,6 +1,9 @@
 package com.example.orderservice.order.controller;
 
+import com.example.orderservice.global.Service.MessageService;
+import com.example.orderservice.global.dto.MessageDto;
 import com.example.orderservice.order.dto.OrderDto;
+import com.example.orderservice.order.entity.Content;
 import com.example.orderservice.order.mapstruct.OrderMapStruct;
 import com.example.orderservice.order.service.OrderService;
 import com.example.orderservice.order.vo.RequestOrder;
@@ -20,6 +23,7 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
     private final OrderMapStruct orderMapStruct;
+    private final MessageService messageService;
 
     @PostMapping("")
     public ResponseEntity<Integer> createOrder(@Valid @RequestBody RequestOrder requestOrder, HttpServletRequest request) {
@@ -53,5 +57,11 @@ public class OrderController {
     @GetMapping("/statusPayment")
     public ResponseEntity<Integer> changePayment(@RequestParam String orderUUID) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.changePayment(orderUUID));
+    }
+
+    @PostMapping("/rabbitTest")
+    public ResponseEntity<?> rabbit(@RequestBody Content content) {
+        messageService.sendStock(content.getUnitCount());
+        return ResponseEntity.ok("Message sent to RabbitMQ!");
     }
 }

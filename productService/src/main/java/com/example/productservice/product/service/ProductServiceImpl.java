@@ -15,12 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -65,8 +60,6 @@ public class ProductServiceImpl implements ProductService{
         Page<Product> pageBy = productRepository.findPageByNameContaining(productName, pageable);
         return pageBy.map(productMapStruct::changeDto);
     }
-
-
 
     // internal 의 서비스
     @Override
