@@ -27,6 +27,7 @@ public class InternalController {
     @Transactional
     @GetMapping("/{productUUID}")
     public ResponseProduct existProduct(@PathVariable String productUUID) {
+
         Product product = productRepository.findByProductUUID(productUUID);
 
         if (product == null) {
@@ -42,6 +43,7 @@ public class InternalController {
         return productService.increaseCount(content);
     }
 
+    // Radisson Lock
     @PutMapping("/decrease")
     public ResponseProduct decreaseProductCount(@RequestBody Content content) {
         return productService.decreaseCount(content);
@@ -51,6 +53,7 @@ public class InternalController {
 //    @Transactional
 //    @PutMapping("/decrease")
 //    public ResponseProduct decreaseProductCount(@RequestBody Content content) {
+//        System.out.println("비관적 락");
 //        Product product = productRepository.findByProductUUIDForUpdate(content.getProductUUID());
 //
 //        if (product == null) {

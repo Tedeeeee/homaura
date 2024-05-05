@@ -30,7 +30,7 @@ class OrderServiceApplicationTests {
     @DisplayName("재고보다 많은 주문이 동시에 들어오는 경우")
     void concurrencyOrder() throws InterruptedException {
         HttpServletRequest request = null;
-        int numThreads = 100;
+        int numThreads = 2000;
         CountDownLatch doneSignal = new CountDownLatch(numThreads);
         ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
 
@@ -57,8 +57,8 @@ class OrderServiceApplicationTests {
 
         //then
         assertAll(
-                () -> assertThat(successCount.get()).isEqualTo(50),
-                () -> assertThat(failCount.get()).isEqualTo(50)
+                () -> assertThat(successCount.get()).isEqualTo(2000),
+                () -> assertThat(failCount.get()).isEqualTo(0)
         );
     }
 
@@ -71,8 +71,8 @@ class OrderServiceApplicationTests {
 
         List<Content> contents = new ArrayList<>();
         Content content = new Content();
-        content.setProductUUID("1b1c16ab-e771-4bfc-b0c4-2fe8e8e8207a");
-        content.setUnitCount(2);
+        content.setProductUUID("ae14b92f-8d2a-4961-8546-b135183c799a");
+        content.setUnitCount(1);
         contents.add(content);
 
         orderDto.setProducts(contents);

@@ -8,6 +8,7 @@ import com.example.productservice.product.mapstruct.ProductMapStruct;
 import com.example.productservice.product.repository.ProductRepository;
 import com.example.productservice.product.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService{
@@ -25,6 +27,8 @@ public class ProductServiceImpl implements ProductService{
     private final ProductMapStruct productMapStruct;
     private final ProductRepository productRepository;
     private final RedissonClient redissonClient;
+
+    private int numbering;
 
     @Override
     public int createProduct(ProductDto productDto) {
@@ -67,7 +71,7 @@ public class ProductServiceImpl implements ProductService{
         RLock lock = redissonClient.getLock(content.getProductUUID());
 
         try{
-            boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
+            boolean available = lock.tryLock(120, 2, TimeUnit.SECONDS);
             if (!available) {
                 throw new RuntimeException("Lock 획득 실패!");
             }
@@ -95,24 +99,29 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public ResponseProduct decreaseCount(Content content) {
+        System.out.println("redisson");
         RLock lock = redissonClient.getLock(content.getProductUUID());
 
         try{
-            boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
+            boolean available = lock.tryLock(20, 1, TimeUnit.SECONDS);
             if (!available) {
                 throw new RuntimeException("Lock 획득 실패!");
             }
             Product product = productRepository.findByProductUUID(content.getProductUUID());
 
             if (product == null) {
-                throw new IllegalArgumentException("제품을 찾을 수 없습니다");
+                return null;
             }
 
             if (product.getStock() < content.getUnitCount()) {
-                throw new RuntimeException("재고가 부족하여 주문을 생성할 수 없습니다");
+                return null;
             }
 
+            int stock = product.getStock();
             product.decreaseStock(content.getUnitCount());
+
+            log.info("현재 회원 번호 : {}", ++numbering);
+            log.info("재고 변경 : [{} -> {}]", stock, product.getStock());
 
             productRepository.save(product);
 

@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
-@Component
+//@Component
 @RequiredArgsConstructor
 public class OrderStatusScheduling {
     private final OrderRepository orderRepository;

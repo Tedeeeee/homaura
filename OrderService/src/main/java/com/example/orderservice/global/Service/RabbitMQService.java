@@ -1,5 +1,6 @@
 package com.example.orderservice.global.Service;
 
+import com.example.orderservice.order.entity.Content;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class MessageService {
+public class RabbitMQService {
 
     @Value("${rabbitmq.exchange.name}")
     private String exchangeName;
@@ -18,9 +19,10 @@ public class MessageService {
     private String routingKey;
 
     private final RabbitTemplate rabbitTemplate;
+    private int numbering;
 
-    public void sendStock(int stock) {
-        log.info("stock sent: {}", stock);
-        rabbitTemplate.convertAndSend(exchangeName, routingKey, stock);
+    public void sendStock(Content content) {
+        log.info("{}번째 전송 stock sent: {}",++numbering, content.getUnitCount());
+        rabbitTemplate.convertAndSend(exchangeName, routingKey, content);
     }
 }

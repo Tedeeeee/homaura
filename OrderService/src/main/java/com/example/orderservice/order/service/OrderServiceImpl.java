@@ -1,5 +1,6 @@
 package com.example.orderservice.order.service;
 
+import com.example.orderservice.global.Service.RabbitMQService;
 import com.example.orderservice.order.client.ProductServiceClient;
 import com.example.orderservice.order.vo.ResponseProduct;
 import com.example.orderservice.order.dto.OrderDto;
@@ -31,16 +32,20 @@ public class OrderServiceImpl implements OrderService {
     private final OrderProductRepository orderProductRepository;
     private final OrderMapStruct orderMapStruct;
     private final ProductServiceClient productServiceClient;
+    private final RabbitMQService rabbitMQService;
+
+    private int numbering;
 
     @Override
     @Transactional
     //@Retry(name = "retry", fallbackMethod = "retryFallback")
     //@CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
     public int createOrder(OrderDto orderDto, HttpServletRequest request) {
-        String uuid = request.getHeader("uuid");
+        //String uuid = request.getHeader("uuid");
         // 테스트 용
-        //String uuid = orderDto.getMemberUUID();
+        String uuid = orderDto.getMemberUUID();
 
+        log.info("현재 회원 번호 : {}", ++numbering);
         Order order = Order.builder()
                 .orderUUID(UUID.randomUUID().toString())
                 .memberUUID(uuid)
@@ -53,7 +58,16 @@ public class OrderServiceImpl implements OrderService {
 
         long totalPrice = 0L;
         for (Content content : orderDto.getProducts()) {
+            // rabbitMQ 전달
+            //rabbitMQService.sendStock(content);
+            //ResponseProduct product = productServiceClient.existProduct(content.getProductUUID());
+
+            // feign 사용
             ResponseProduct product = productServiceClient.decreaseCount(content);
+
+            if (product == null) {
+                throw new RuntimeException("상품 재고가 부족합니다");
+            }
 
             OrderProduct orderProduct = OrderProduct.builder()
                     .order(order)
