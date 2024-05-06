@@ -13,6 +13,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +35,7 @@ public class RabbitMQService {
 
     @RabbitListener(queues = "${rabbitmq.queue.name}")
     public void decreaseCount(Content content) {
+        System.out.println("레디슨");
         RLock lock = redissonClient.getLock(content.getProductUUID());
 
         try{
@@ -56,4 +59,23 @@ public class RabbitMQService {
             lock.unlock();
         }
     }
+
+//    @RabbitListener(queues = "${rabbitmq.queue.name}")
+//    @Transactional
+//    public void decreaseProductCount(Content content) {
+//        System.out.println("비관적");
+//        Product product = productRepository.findByProductUUIDForUpdate(content.getProductUUID());
+//
+//        if (product == null) {
+//            throw new IllegalArgumentException("제품을 찾을 수 없습니다");
+//        }
+//
+//        if (product.getStock() < content.getUnitCount()) {
+//            return;
+//        }
+//
+//        product.decreaseStock(content.getUnitCount());
+//
+//        productRepository.save(product);
+//    }
 }

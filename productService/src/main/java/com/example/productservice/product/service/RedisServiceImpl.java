@@ -13,7 +13,18 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void setValue(String key, String value) {
-        ValueOperations<String, Object> values = redisTemplate.opsForValue();
-        values.set(key, value);
+        redisTemplate.opsForSet().add(key, value);
     }
+
+    @Override
+    public void setRemove(String key) {
+        redisTemplate.opsForSet().remove(key);
+    }
+
+    @Override
+    public Long countingCard(String key) {
+        return redisTemplate.opsForSet().size(key);
+    }
+
+
 }

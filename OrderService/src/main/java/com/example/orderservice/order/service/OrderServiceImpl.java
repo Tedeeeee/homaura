@@ -59,10 +59,12 @@ public class OrderServiceImpl implements OrderService {
         long totalPrice = 0L;
         for (Content content : orderDto.getProducts()) {
             // rabbitMQ 전달
+            //System.out.println("rabbitMQ");
             //rabbitMQService.sendStock(content);
             //ResponseProduct product = productServiceClient.existProduct(content.getProductUUID());
 
             // feign 사용
+            System.out.println("feign");
             ResponseProduct product = productServiceClient.decreaseCount(content);
 
             if (product == null) {

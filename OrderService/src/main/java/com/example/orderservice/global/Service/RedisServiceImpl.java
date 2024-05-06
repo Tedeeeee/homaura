@@ -66,4 +66,8 @@ public class RedisServiceImpl implements RedisService{
     public Map<String, String> getAllValues(String key) {
         return hashOperations.entries(key);
     }
+
+    public void upCount(String key) {
+        redisTemplate.opsForValue().increment(key);
+    }
 }

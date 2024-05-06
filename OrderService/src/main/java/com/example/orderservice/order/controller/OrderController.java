@@ -1,6 +1,7 @@
 package com.example.orderservice.order.controller;
 
 import com.example.orderservice.global.Service.RabbitMQService;
+import com.example.orderservice.global.Service.RedisService;
 import com.example.orderservice.order.dto.OrderDto;
 import com.example.orderservice.order.entity.Content;
 import com.example.orderservice.order.mapstruct.OrderMapStruct;
@@ -22,8 +23,8 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
     private final OrderMapStruct orderMapStruct;
+    private final RedisService redisService;
 
-    private int i;
 
     @PostMapping("")
     public ResponseEntity<Integer> createOrder(@Valid @RequestBody RequestOrder requestOrder, HttpServletRequest request) {
@@ -60,8 +61,7 @@ public class OrderController {
     }
 
     @GetMapping("/dfdf")
-    public String sdf() {
-        System.out.println(++i);
-        return "hi";
+    public void sdf(@RequestParam String key) {
+        redisService.upCount(key);
     }
 }

@@ -27,6 +27,7 @@ public class ProductServiceImpl implements ProductService{
     private final ProductMapStruct productMapStruct;
     private final ProductRepository productRepository;
     private final RedissonClient redissonClient;
+    private final RedisService redisService;
 
     private int numbering;
 
@@ -71,7 +72,7 @@ public class ProductServiceImpl implements ProductService{
         RLock lock = redissonClient.getLock(content.getProductUUID());
 
         try{
-            boolean available = lock.tryLock(120, 2, TimeUnit.SECONDS);
+            boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
             if (!available) {
                 throw new RuntimeException("Lock 획득 실패!");
             }
@@ -119,9 +120,6 @@ public class ProductServiceImpl implements ProductService{
 
             int stock = product.getStock();
             product.decreaseStock(content.getUnitCount());
-
-            log.info("현재 회원 번호 : {}", ++numbering);
-            log.info("재고 변경 : [{} -> {}]", stock, product.getStock());
 
             productRepository.save(product);
 

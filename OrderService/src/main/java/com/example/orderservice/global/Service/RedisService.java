@@ -18,5 +18,7 @@ public interface RedisService {
     void updateField(String key, String field, String increment);
 
     Map<String, String> getAllValues(String key);
+
+    public void upCount(String key);
 }
 
