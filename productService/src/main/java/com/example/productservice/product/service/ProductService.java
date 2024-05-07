@@ -16,5 +16,5 @@ public interface ProductService {
     // internal 의 서비스
     ResponseProduct increaseCount(Content content);
 
-    ResponseProduct decreaseCount(Content content);
+    int decreaseCount(Content content);
 }

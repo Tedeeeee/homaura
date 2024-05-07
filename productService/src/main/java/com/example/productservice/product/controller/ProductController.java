@@ -54,8 +54,8 @@ public class ProductController {
 
     // 선착순 물건이라 재고를 미리 내림
     @PostMapping("/unique")
-    public void decreaseItem(@RequestBody Content content) {
-        productService.decreaseCount(content);
+    public int decreaseItem(@RequestBody Content content) {
+       return productService.decreaseCount(content);
     }
 
 }

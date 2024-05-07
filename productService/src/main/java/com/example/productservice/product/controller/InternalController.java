@@ -44,10 +44,10 @@ public class InternalController {
     }
 
     // Radisson Lock
-    @PutMapping("/decrease")
-    public ResponseProduct decreaseProductCount(@RequestBody Content content) {
-        return productService.decreaseCount(content);
-    }
+//    @PutMapping("/decrease")
+//    public ResponseProduct decreaseProductCount(@RequestBody Content content) {
+//        return productService.decreaseCount(content);
+//    }
 
     // Pessimistic Lock
 //    @Transactional

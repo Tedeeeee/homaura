@@ -1,13 +1,11 @@
-package com.example.orderservice.global.config;
+package com.example.paymentservice.payment.config;
 
-
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -33,18 +31,28 @@ public class RabbitMQConfig {
     private String exchangeName;
 
     @Bean
-    public Queue queue() {
+    public DirectExchange exchange() {
+        return new DirectExchange("payment.exchange");
+    }
+
+    @Bean
+    public Queue orderQueue() {
+        return new Queue("order.queue");
+    }
+
+    @Bean
+    public Binding orderBinding(Queue orderQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(orderQueue).to(exchange).with("order.key");
+    }
+
+    @Bean
+    public Queue productQueue() {
         return new Queue("product.queue");
     }
 
     @Bean
-    public DirectExchange exchange() {
-        return new DirectExchange(exchangeName);
-    }
-
-    @Bean
-    public Binding binding(Queue queue, DirectExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with("product.key");
+    public Binding productBinding(Queue productQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(productQueue).to(exchange).with("product.key");
     }
 
     @Bean
@@ -58,7 +66,7 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+    public RabbitTemplate rabbitTemplate(org.springframework.amqp.rabbit.connection.ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
         return rabbitTemplate;

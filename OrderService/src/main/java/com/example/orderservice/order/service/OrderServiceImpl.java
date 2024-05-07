@@ -41,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     //@Retry(name = "retry", fallbackMethod = "retryFallback")
     //@CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
-    public int createOrder(OrderDto orderDto, HttpServletRequest request) {
+    public String createOrder(OrderDto orderDto, HttpServletRequest request) {
         String uuid = request.getHeader("uuid");
         // 테스트 용
         //String uuid = orderDto.getMemberUUID();
@@ -73,7 +73,51 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.save(order);
 
-        return 1;
+        return order.getOrderUUID();
+    }
+
+    @Override
+    @Transactional
+    //@Retry(name = "retry", fallbackMethod = "retryFallback")
+    //@CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
+    public String createOrders(OrderDto orderDto, HttpServletRequest request) {
+        String uuid = request.getHeader("uuid");
+        // 테스트 용
+        //String uuid = orderDto.getMemberUUID();
+
+        Order order = Order.builder()
+                .orderUUID(UUID.randomUUID().toString())
+                .memberUUID(uuid)
+                .deliveryAddress(orderDto.getDeliveryAddress())
+                .deliveryPhone(orderDto.getDeliveryPhone())
+                .payment(Status.READY)
+                .createAt(LocalDateTime.now())
+                .updateAt(LocalDateTime.now())
+                .build();
+
+        long totalPrice = 0L;
+        for (Content content : orderDto.getProducts()) {
+            // 일반 구매는 당장 급하지 않기 때문에 rabbitMQ로 진행
+
+            ResponseProduct product = productServiceClient.existProduct(content.getProductUUID());
+
+            OrderProduct orderProduct = OrderProduct.builder()
+                    .order(order)
+                    .productUUID(content.getProductUUID())
+                    .unitCount(content.getUnitCount())
+                    .build();
+            orderProductRepository.save(orderProduct);
+
+            totalPrice += (long) product.getPrice() * content.getUnitCount();
+        }
+
+        rabbitMQService.sendStock(orderDto.getProducts());
+
+        order.setTotalPrice(totalPrice);
+
+        orderRepository.save(order);
+
+        return order.getOrderUUID();
     }
 
     private int fallback(OrderDto orderDto, HttpServletRequest request, Throwable t) {

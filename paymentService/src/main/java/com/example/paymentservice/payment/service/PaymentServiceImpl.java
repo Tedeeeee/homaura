@@ -20,6 +20,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final RedisService redisService;
     private final RedissonClient redissonClient;
+    private final RabbitMQService rabbitMQService;
 
     private int uu;
 
@@ -62,39 +63,26 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void itemsCount(List<Content> content, HttpServletRequest request) {
-        RLock lock = redissonClient.getLock("stock");
+        String uuid = request.getHeader("uuid");
+        for (Content cont : content) {
+            String key = cont.getProductUUID() + ":personal";
 
-        try {
-            boolean available = lock.tryLock(20, 2, TimeUnit.SECONDS);
-            if (!available) {
-                throw new RuntimeException("Lock 획득 실패!");
+            long value = Long.parseLong(redisService.getValue(cont.getProductUUID()));
+            Long total = redisService.getTotal(key);
+
+            if (value <= total) {
+                throw new RuntimeException("재고가 부족합니다");
             }
 
-            for (Content cont : content) {
-                String uuid = request.getHeader("uuid");
-                String key = cont.getProductUUID() + ":personal";
+            redisService.setValue(key, String.valueOf(uu++));
 
-                long value = Long.parseLong(redisService.getValue(cont.getProductUUID()));
-                Long total = redisService.getTotal(key);
+            Payment payment = Payment.builder()
+                    .productUUID(cont.getProductUUID())
+                    .memberUUID(uuid)
+                    .status(Status.PLUS)
+                    .build();
 
-                if (value <= total) {
-                    throw new RuntimeException("재고가 부족합니다");
-                }
-
-                redisService.setValue(key, String.valueOf(uu++));
-
-                Payment payment = Payment.builder()
-                        .productUUID(cont.getProductUUID())
-                        .memberUUID(uuid)
-                        .status(Status.PLUS)
-                        .build();
-
-                paymentRepository.save(payment);
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            lock.unlock();
+            paymentRepository.save(payment);
         }
     }
 

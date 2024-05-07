@@ -1,17 +1,13 @@
-package com.example.orderservice.global.Service;
+package com.example.paymentservice.payment.service;
 
-import com.example.orderservice.order.entity.Content;
+import com.example.paymentservice.payment.vo.Content;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-@Slf4j
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class RabbitMQService {
 
     @Value("${rabbitmq.exchange.name}")
@@ -19,7 +15,8 @@ public class RabbitMQService {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public void sendStock(List<Content> contents) {
-        rabbitTemplate.convertAndSend(exchangeName, "product.key", contents);
+    public void changeStock(Content content) {
+        rabbitTemplate.convertAndSend(exchangeName, "product.key", content);
     }
+
 }

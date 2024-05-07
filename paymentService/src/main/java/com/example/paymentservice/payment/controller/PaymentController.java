@@ -23,17 +23,20 @@ public class PaymentController {
         paymentService.itemCount(content, request);
     }
 
-    // 장바구니 상품 구매
-    @PostMapping("")
-    public void purchase(@RequestBody List<Content> content, HttpServletRequest request) {
-        paymentService.itemsCount(content, request);
-    }
-
     // 상품 재고 확인
     @GetMapping("")
     public ResponseEntity<Integer> getCount(@RequestParam String productUUID) {
         return ResponseEntity.status(HttpStatus.OK).body(paymentService.getStock(productUUID));
     }
+
+    // 장바구니 상품 구매
+    @PostMapping("/generate")
+    public void purchase(@RequestBody List<Content> content, HttpServletRequest request) {
+        paymentService.itemsCount(content, request);
+    }
+
+    // 주문서 발급
+
 
     // 예외 발생
     // 1. 상세 정보 입력 중 결제 취소 버튼 클릭

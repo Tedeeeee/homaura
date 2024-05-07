@@ -1,9 +1,7 @@
 package com.example.orderservice.order.controller;
 
-import com.example.orderservice.global.Service.RabbitMQService;
-import com.example.orderservice.global.Service.RedisService;
+import com.example.orderservice.wishList.service.RedisService;
 import com.example.orderservice.order.dto.OrderDto;
-import com.example.orderservice.order.entity.Content;
 import com.example.orderservice.order.mapstruct.OrderMapStruct;
 import com.example.orderservice.order.service.OrderService;
 import com.example.orderservice.order.vo.RequestOrder;
@@ -27,10 +25,18 @@ public class OrderController {
 
 
     // 상세 정보 입력 후 주문하기
-    @PostMapping("")
-    public ResponseEntity<Integer> createOrder(@Valid @RequestBody RequestOrder requestOrder, HttpServletRequest request) {
+    // 선착순 이벤트 주문하기
+    @PostMapping("/unique")
+    public ResponseEntity<String> createOrder(@Valid @RequestBody RequestOrder requestOrder, HttpServletRequest request) {
         OrderDto orderDto = orderMapStruct.changeDto(requestOrder);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(orderDto, request));
+    }
+
+    // 일반 주문
+    @PostMapping("")
+    public ResponseEntity<String> createOrders(@Valid @RequestBody RequestOrder requestOrder, HttpServletRequest request) {
+        OrderDto orderDto = orderMapStruct.changeDto(requestOrder);
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrders(orderDto, request));
     }
 
     // 나의 주문 리스트 확인
@@ -52,21 +58,9 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.refundOrder(orderUUID));
     }
 
-    // 예약 구매 메소드 처리
-    @PostMapping("/unique")
-    public ResponseEntity<ResponseOrder> createUniqueOrder(@Valid @RequestBody RequestOrder requestOrder, HttpServletRequest request) {
-        OrderDto orderDto = orderMapStruct.changeDto(requestOrder);
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderMapStruct.changeResponse(orderService.createUniqueOrder(orderDto, request)));
-    }
-
     // 결제 완료
     @GetMapping("/statusPayment")
     public ResponseEntity<Integer> changePayment(@RequestParam String orderUUID) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.changePayment(orderUUID));
-    }
-
-    @GetMapping("/dfdf")
-    public void sdf(@RequestParam String key) {
-        redisService.upCount(key);
     }
 }

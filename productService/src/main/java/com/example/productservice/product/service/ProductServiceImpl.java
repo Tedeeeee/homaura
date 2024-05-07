@@ -11,11 +11,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
 
@@ -99,35 +101,22 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ResponseProduct decreaseCount(Content content) {
-        System.out.println("redisson");
-        RLock lock = redissonClient.getLock(content.getProductUUID());
+    @Transactional
+    public int decreaseCount(Content content) {
+        Product product = productRepository.findByProductUUIDForUpdate(content.getProductUUID());
 
-        try{
-            boolean available = lock.tryLock(20, 1, TimeUnit.SECONDS);
-            if (!available) {
-                throw new RuntimeException("Lock 획득 실패!");
-            }
-            Product product = productRepository.findByProductUUID(content.getProductUUID());
-
-            if (product == null) {
-                return null;
-            }
-
-            if (product.getStock() < content.getUnitCount()) {
-                return null;
-            }
-
-            int stock = product.getStock();
-            product.decreaseStock(content.getUnitCount());
-
-            productRepository.save(product);
-
-            return productMapStruct.changeResponse(productMapStruct.changeDto(product));
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            lock.unlock();
+        if (product == null) {
+            throw new RuntimeException("상품이 존재하지 않습니다");
         }
+
+        if (product.getStock() < content.getUnitCount()) {
+            throw new RuntimeException("상품의 재고가 남아있지 않습니다");
+        }
+
+        product.decreaseStock(content.getUnitCount());
+
+        productRepository.save(product);
+
+        return 1;
     }
 }
