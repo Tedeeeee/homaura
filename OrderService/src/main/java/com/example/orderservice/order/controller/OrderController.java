@@ -26,23 +26,27 @@ public class OrderController {
     private final RedisService redisService;
 
 
+    // 상세 정보 입력 후 주문하기
     @PostMapping("")
     public ResponseEntity<Integer> createOrder(@Valid @RequestBody RequestOrder requestOrder, HttpServletRequest request) {
         OrderDto orderDto = orderMapStruct.changeDto(requestOrder);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(orderDto, request));
     }
 
+    // 나의 주문 리스트 확인
     @GetMapping("")
     public ResponseEntity<List<ResponseOrder>> getOrders(HttpServletRequest request) {
         List<OrderDto> orderList = orderService.getOrderList(request);
         return ResponseEntity.status(HttpStatus.OK).body(orderMapStruct.changeResponseList(orderList));
     }
 
+    // 주문 취소
     @DeleteMapping("")
     public ResponseEntity<String> deleteOrder(@RequestParam String orderUUID) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.deleteOrder(orderUUID));
     }
 
+    // 반품 하기
     @GetMapping("/refund")
     public ResponseEntity<String> refundOrder(@RequestParam String orderUUID) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.refundOrder(orderUUID));
@@ -55,6 +59,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderMapStruct.changeResponse(orderService.createUniqueOrder(orderDto, request)));
     }
 
+    // 결제 완료
     @GetMapping("/statusPayment")
     public ResponseEntity<Integer> changePayment(@RequestParam String orderUUID) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.changePayment(orderUUID));

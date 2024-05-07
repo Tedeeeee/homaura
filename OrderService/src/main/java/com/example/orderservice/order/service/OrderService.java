@@ -15,8 +15,5 @@ public interface OrderService {
 
     String refundOrder(String orderUUID);
 
-    // 예약 주문 전용 메소드
-    OrderDto createUniqueOrder(OrderDto orderDto, HttpServletRequest request);
-
     int changePayment(String orderUUID);
 }
