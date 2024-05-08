@@ -16,7 +16,6 @@ import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +50,7 @@ public class OrderServiceImpl implements OrderService {
                 .memberUUID(uuid)
                 .deliveryAddress(orderDto.getDeliveryAddress())
                 .deliveryPhone(orderDto.getDeliveryPhone())
+                .status(Status.READY)
                 .payment(Status.READY)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
@@ -91,6 +91,7 @@ public class OrderServiceImpl implements OrderService {
                 .deliveryAddress(orderDto.getDeliveryAddress())
                 .deliveryPhone(orderDto.getDeliveryPhone())
                 .payment(Status.READY)
+                .status(Status.READY)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
                 .build();
@@ -192,6 +193,14 @@ public class OrderServiceImpl implements OrderService {
         return "반품이 진행됩니다";
     }
 
+    @Override
+    @Transactional
+    public int changePayment(String orderUUID) {
+        Order order = orderRepository.findByOrderUUID(orderUUID);
+        order.changePaymentStatus();
+        return 1;
+    }
+
     private OrderDto convertToDto(Order order) {
         OrderDto orderDto = orderMapStruct.changeDto(order);
         List<Content> contents = new ArrayList<>();
@@ -203,13 +212,5 @@ public class OrderServiceImpl implements OrderService {
         }
         orderDto.setProducts(contents);
         return orderDto;
-    }
-
-    @Override
-    @Transactional
-    public int changePayment(String orderUUID) {
-        Order order = orderRepository.findByOrderUUID(orderUUID);
-        order.changePaymentStatus();
-        return 1;
     }
 }

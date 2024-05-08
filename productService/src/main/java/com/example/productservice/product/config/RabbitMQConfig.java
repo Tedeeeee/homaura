@@ -1,4 +1,4 @@
-package com.example.productservice.global.config;
+package com.example.productservice.product.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -26,6 +26,21 @@ public class RabbitMQConfig {
 
     @Value("${spring.rabbitmq.password}")
     private String rabbitmqPassword;
+
+    @Bean
+    public Queue queue() {
+        return new Queue("product.queue");
+    }
+
+    @Bean
+    public DirectExchange exchange() {
+        return new DirectExchange("product.exchange");
+    }
+
+    @Bean
+    public Binding binding(Queue queue, DirectExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with("product.key");
+    }
 
     @Bean
     public ConnectionFactory connectionFactory() {

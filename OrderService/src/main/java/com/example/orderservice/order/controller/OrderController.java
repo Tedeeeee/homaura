@@ -21,7 +21,6 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
     private final OrderMapStruct orderMapStruct;
-    private final RedisService redisService;
 
 
     // 상세 정보 입력 후 주문하기

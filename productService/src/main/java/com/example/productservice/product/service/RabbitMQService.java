@@ -1,7 +1,6 @@
-package com.example.productservice.global.service;
+package com.example.productservice.product.service;
 
 import com.example.productservice.product.entity.Content;
-import com.example.productservice.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;

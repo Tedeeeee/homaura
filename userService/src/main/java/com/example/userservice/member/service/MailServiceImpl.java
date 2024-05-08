@@ -6,7 +6,6 @@ import com.example.userservice.member.utils.RandomNum;
 import com.example.userservice.member.vo.RequestCheck;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;

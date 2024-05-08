@@ -1,7 +1,6 @@
 package com.example.userservice.member.entity;
 
 import com.example.userservice.member.utils.CryptoStringConverter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
