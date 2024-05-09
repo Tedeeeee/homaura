@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseOrder {
+    private String orderUUID;
     private String deliveryAddress;
     private String deliveryPhone;
     private String totalPrice;

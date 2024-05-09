@@ -14,12 +14,6 @@ public class RedisServiceImpl implements RedisService{
     private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public void setValues(String key, String value) {
-        ValueOperations<String, Object> values = redisTemplate.opsForValue();
-        values.set(key, value);
-    }
-
-    @Override
     public void setValues(String key, String value, Duration duration) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
         values.set(key, value, duration);
@@ -30,10 +24,5 @@ public class RedisServiceImpl implements RedisService{
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
         if (values.get(key) == null) return "";
         return String.valueOf(values.get(key));
-    }
-
-    @Override
-    public void deleteValue(String key) {
-        redisTemplate.delete(key);
     }
 }

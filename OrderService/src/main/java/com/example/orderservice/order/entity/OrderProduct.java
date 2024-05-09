@@ -17,8 +17,8 @@ public class OrderProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "orderUUID")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id")
     private Order order;
 
     private String productUUID;

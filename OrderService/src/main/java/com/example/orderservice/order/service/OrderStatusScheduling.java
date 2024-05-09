@@ -32,7 +32,7 @@ public class OrderStatusScheduling {
 
         for (Order order : orderAll) {
             // 0. DONE 이거나 CANCEL 상태면 더이상 상태변경 불가
-            if (order.getStatus().equals(Status.DONE) || order.getStatus().equals(Status.CANCEL)) continue;
+            if (order.getStatus().equals(Status.DONE) || order.getStatus().equals(Status.CANCEL) || order.getStatus().equals(Status.READY)) continue;
 
             // 1. createAt와 updateAt의 시간 차이 계산
             long createMinute = Duration.between(order.getCreateAt(), LocalDateTime.now()).toMinutes();
@@ -62,7 +62,6 @@ public class OrderStatusScheduling {
         }
     }
 
-    @Transactional
     public void updateProduct(Order order) {
         List<OrderProduct> orderProductList = orderProductRepository.findByOrder(order);
 

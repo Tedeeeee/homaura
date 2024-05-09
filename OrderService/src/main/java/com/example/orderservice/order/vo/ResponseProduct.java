@@ -9,4 +9,5 @@ public class ResponseProduct {
     private int stock;
     private int price;
     private long totalPrice;
+    private boolean uniqueItem;
 }

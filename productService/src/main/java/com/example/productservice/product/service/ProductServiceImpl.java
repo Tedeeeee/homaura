@@ -6,9 +6,9 @@ import com.example.productservice.product.entity.Product;
 import com.example.productservice.product.entity.Status;
 import com.example.productservice.product.mapstruct.ProductMapStruct;
 import com.example.productservice.product.repository.ProductRepository;
-import com.example.productservice.product.vo.RequestContent;
-import com.example.productservice.product.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,11 +16,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService{
@@ -40,6 +38,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    @Cacheable(cacheNames = "product", key = "#productUUID")
     public ProductDto getProduct(String productUUID) {
         Product product = productRepository.findByProductUUID(productUUID);
 
@@ -65,9 +64,38 @@ public class ProductServiceImpl implements ProductService{
 
     // internal 의 서비스
     @Override
-    public void increaseCount(RequestContent requestContent) {
-        Product product = productRepository.findByProductUUID(requestContent.getProductUUID());
+    @Transactional
+    public int increaseCount(Content content) {
+        Product product = productRepository.findByProductUUIDForUpdate(content.getProductUUID());
 
-        product.increaseStock(requestContent.getUnitCount());
+        if (product == null) {
+            throw new RuntimeException("상품이 존재하지 않습니다");
+        }
+
+        product.increaseStock(content.getUnitCount());
+
+        productRepository.save(product);
+
+        return 1;
+    }
+
+    @Override
+    @Transactional
+    public int decreaseCount(Content content) {
+        Product product = productRepository.findByProductUUIDForUpdate(content.getProductUUID());
+
+        if (product == null) {
+            throw new RuntimeException("상품이 존재하지 않습니다");
+        }
+
+        if (product.getStock() < content.getUnitCount()) {
+            throw new RuntimeException("상품의 재고가 남아있지 않습니다");
+        }
+
+        product.decreaseStock(content.getUnitCount());
+
+        productRepository.save(product);
+
+        return 1;
     }
 }
