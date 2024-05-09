@@ -1,5 +1,9 @@
 package com.example.orderservice.global.config;
 
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -22,6 +26,21 @@ public class RabbitMQConfig {
 
     @Value("${spring.rabbitmq.password}")
     private String rabbitmqPassword;
+
+    @Bean
+    public Queue queue() {
+        return new Queue("order.queue");
+    }
+
+    @Bean
+    public DirectExchange exchange() {
+        return new DirectExchange("homaura.exchange");
+    }
+
+    @Bean
+    public Binding binding(Queue queue, DirectExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with("order.key");
+    }
 
     @Bean
     public ConnectionFactory connectionFactory() {

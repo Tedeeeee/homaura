@@ -40,4 +40,17 @@ public class RedisServiceImpl implements RedisService{
     public void deleteValue(String key) {
         redisTemplate.delete(key);
     }
+
+    public String getHashValue(String key, String field) {
+        return (String) redisTemplate.opsForHash().get(key, field);
+    }
+
+    @Override
+    public String getValue(String key) {
+        return (String) redisTemplate.opsForValue().get(key);
+    }
+
+    public void increaseCount(String key, int value) {
+        redisTemplate.opsForValue().increment(key, value);
+    }
 }

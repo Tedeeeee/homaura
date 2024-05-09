@@ -26,6 +26,7 @@ public class WishListServiceImpl implements WishListService{
         List<RequestWishList> list = new ArrayList<>();
         for (String s : allValue.keySet()) {
             int value = Integer.parseInt(allValue.get(s));
+
             if (value == 0) {
                 redisService.deleteField(uuid, s);
                 continue;

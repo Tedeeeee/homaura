@@ -1,6 +1,10 @@
 package com.example.productservice.product.service;
 
-public interface RedisService {
+import com.example.productservice.product.entity.Product;
 
-    void setValue(String key, String value);
+public interface RedisService {
+    void setKey(String key);
+    void hSetValues(String key, String field, String value);
+    void deleteField(String key, String field);
+    void deleteValue(String key);
 }

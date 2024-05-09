@@ -8,12 +8,15 @@ import com.example.productservice.product.mapstruct.ProductMapStruct;
 import com.example.productservice.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -35,6 +38,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    @Cacheable(cacheNames = "product", key = "#productUUID")
     public ProductDto getProduct(String productUUID) {
         Product product = productRepository.findByProductUUID(productUUID);
 

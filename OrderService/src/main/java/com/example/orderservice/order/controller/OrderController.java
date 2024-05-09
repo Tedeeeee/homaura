@@ -28,14 +28,16 @@ public class OrderController {
     @PostMapping("/unique")
     public ResponseEntity<String> createOrder(@Valid @RequestBody RequestOrder requestOrder, HttpServletRequest request) {
         OrderDto orderDto = orderMapStruct.changeDto(requestOrder);
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(orderDto, request));
+        orderDto.setMemberUUID(request.getHeader("uuid"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(orderDto));
     }
 
     // 일반 주문
     @PostMapping("")
     public ResponseEntity<String> createOrders(@Valid @RequestBody RequestOrder requestOrder, HttpServletRequest request) {
         OrderDto orderDto = orderMapStruct.changeDto(requestOrder);
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrders(orderDto, request));
+        orderDto.setMemberUUID(request.getHeader("uuid"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrders(orderDto));
     }
 
     // 나의 주문 리스트 확인

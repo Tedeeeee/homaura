@@ -20,6 +20,7 @@ public class ProductStatusScheduling {
 
     private final ProductRepository productRepository;
     private final RedisService redisService;
+    private final ProductServiceImpl productService;
 
     @Transactional
     @Scheduled(cron = "0 */1 * * * *")
@@ -34,9 +35,22 @@ public class ProductStatusScheduling {
                 if (reservationTime.isEqual(now)) {
                     product.changeStatus();
                     productRepository.save(product);
-
-                    redisService.setValue(product.getProductUUID(), String.valueOf(product.getStock()));
                 }
+            }
+        }
+    }
+
+    @Transactional
+    @Scheduled(fixedRate = 60000, initialDelay = 3000)
+    public void cacheSchedule() {
+        List<Product> products = productRepository.findAll();
+
+        redisService.deleteValue("product");
+
+        for (Product product : products) {
+            if (product.getStatus().equals(Status.OPEN)) {
+                redisService.setKey(product.getProductUUID());
+                redisService.hSetValues("product", product.getProductUUID(), String.valueOf(product.getStock()));
             }
         }
     }

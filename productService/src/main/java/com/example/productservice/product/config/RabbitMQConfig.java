@@ -34,7 +34,7 @@ public class RabbitMQConfig {
 
     @Bean
     public DirectExchange exchange() {
-        return new DirectExchange("product.exchange");
+        return new DirectExchange("homaura.exchange");
     }
 
     @Bean

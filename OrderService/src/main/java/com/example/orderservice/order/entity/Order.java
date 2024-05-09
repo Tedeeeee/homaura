@@ -38,7 +38,7 @@ public class Order {
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrderProduct> orderProductList = new ArrayList<>();
 
     public void setTotalPrice(Long totalPrice) {

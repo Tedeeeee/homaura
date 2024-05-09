@@ -7,6 +7,7 @@ import com.example.productservice.product.service.ProductService;
 import com.example.productservice.product.vo.RequestProduct;
 import com.example.productservice.product.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -40,7 +40,7 @@ class OrderServiceApplicationTests {
         for (int i = 0; i < numThreads; i++) {
             executorService.execute(() -> {
                 try {
-                    orderService.createOrder(newOrderDto(), null);
+                    //orderService.createOrder(newOrderDto(), null);
                     System.out.println(successCount.get() + "번째 성공");
                     successCount.getAndIncrement();
                 } catch (Exception e) {

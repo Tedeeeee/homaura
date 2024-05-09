@@ -32,7 +32,11 @@ public class InternalController {
         }
 
         ProductDto productDto = productMapStruct.changeDto(product);
-        return productMapStruct.changeResponse(productDto);
+        ResponseProduct responseProduct = productMapStruct.changeResponse(productDto);
+        if (product.getReservationTime() != null) {
+            responseProduct.setUniqueItem(true);
+        }
+        return responseProduct;
     }
 
     @PutMapping("/increase")

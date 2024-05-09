@@ -8,5 +8,9 @@ public interface RedisService {
     void deleteField(String key, String field);
     void deleteValue(String key);
 
+    // 재고 관련
+    String getHashValue(String key, String field);
+    String getValue(String key);
+    void increaseCount(String key, int value);
 }
 
