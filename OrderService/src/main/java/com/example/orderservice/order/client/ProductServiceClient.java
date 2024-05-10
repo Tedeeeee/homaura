@@ -5,6 +5,8 @@ import com.example.orderservice.order.vo.ResponseProduct;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @FeignClient(name = "productService")
 public interface ProductServiceClient {
 
@@ -15,5 +17,8 @@ public interface ProductServiceClient {
     void increaseCount(@RequestBody Content content);
 
     @PutMapping("/internal/decrease")
-    ResponseProduct decreaseCount(@RequestBody Content content);
+    void decreaseCount(@RequestBody List<Content> content);
+
+    @GetMapping("/internal/checkCount")
+    boolean checkCount(@RequestBody List<Content> contents);
 }

@@ -1,5 +1,6 @@
 package com.example.orderservice.order.service;
 
+import com.example.orderservice.global.Service.KafkaProducerService;
 import com.example.orderservice.global.Service.RabbitMQService;
 import com.example.orderservice.order.client.ProductServiceClient;
 import com.example.orderservice.order.vo.ResponseProduct;
@@ -11,22 +12,16 @@ import com.example.orderservice.order.entity.Status;
 import com.example.orderservice.order.mapstruct.OrderMapStruct;
 import com.example.orderservice.order.repository.OrderProductRepository;
 import com.example.orderservice.order.repository.OrderRepository;
-import com.example.orderservice.wishList.service.RedisService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -37,13 +32,13 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapStruct orderMapStruct;
     private final ProductServiceClient productServiceClient;
     private final RabbitMQService rabbitMQService;
-    private final RedisService redisService;
-    private final RedissonClient redissonClient;
+    private final KafkaProducerService kafkaProducerService;
+    private final RedissonLockStockFacade redissonLockStockFacade;
 
     @Override
     @Transactional
-    @Retry(name = "retry", fallbackMethod = "retryFallback")
-    @CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
+    //cd@Retry(name = "retry", fallbackMethod = "retryFallback")
+    //@CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
     public String createOrder(OrderDto orderDto) {
 
         Order order = orderMapStruct.changeEntity(orderDto);
@@ -57,14 +52,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    @Retry(name = "retry", fallbackMethod = "retryFallback")
-    @CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
+    //@Retry(name = "retry", fallbackMethod = "retryFallback")
+    //@CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
     public String createOrders(OrderDto orderDto) {
 
-        if (!checkStock(orderDto)) {
-            throw new RuntimeException("물건이 부족합니다");
-        }
-        rabbitMQService.sendStock(orderDto.getProducts());
+        redissonLockStockFacade.increase(orderDto.getProducts());
+
+        //productServiceClient.decreaseCount(orderDto.getProducts());
+        //rabbitMQService.sendStock(orderDto.getProducts());
+        kafkaProducerService.send("product-topic", orderDto.getProducts());
 
         Order order = orderMapStruct.changeEntity(orderDto);
 
@@ -88,9 +84,6 @@ public class OrderServiceImpl implements OrderService {
             orderProductRepository.save(orderProduct);
 
             totalPrice += (long) product.getPrice() * content.getUnitCount();
-            if (!product.isUniqueItem()) {
-                redisService.increaseCount("personal:" + content.getProductUUID(), content.getUnitCount());
-            }
         }
         order.setTotalPrice(totalPrice);
     }
@@ -186,33 +179,5 @@ public class OrderServiceImpl implements OrderService {
         }
         orderDto.setProducts(contents);
         return orderDto;
-    }
-
-    private boolean checkStock(OrderDto orderDto) {
-        RLock lock = redissonClient.getLock("stock");
-
-        try {
-            boolean available = lock.tryLock(10, 1, TimeUnit.SECONDS);
-            if (!available) {
-                throw new RuntimeException("Lock 획득 실패");
-            }
-
-            for (Content product : orderDto.getProducts()) {
-                String productUUID = product.getProductUUID();
-                int productCount = product.getUnitCount();
-                int count = Integer.parseInt(redisService.getHashValue("product", productUUID));
-                int value = Integer.parseInt(redisService.getValue("personal:" + productUUID));
-
-                int stock = count - value;
-
-                if (stock - productCount < 0) return false;
-            }
-
-            return true;
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            lock.unlock();
-        }
     }
 }

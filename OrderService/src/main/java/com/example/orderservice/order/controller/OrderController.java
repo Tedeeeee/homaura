@@ -1,6 +1,5 @@
 package com.example.orderservice.order.controller;
 
-import com.example.orderservice.wishList.service.RedisService;
 import com.example.orderservice.order.dto.OrderDto;
 import com.example.orderservice.order.mapstruct.OrderMapStruct;
 import com.example.orderservice.order.service.OrderService;

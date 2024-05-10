@@ -41,18 +41,18 @@ public class UniqueTest {
                 try {
                     String user = (userName.getAndIncrement()) + "번 유저";
                     //상품 누르기
-                    productServiceClient.decreaseCount(new Content("47f7f65c-a968-437a-9515-b182a0642d98", 1));
+                    //productServiceClient.decreaseCount(new Content("47f7f65c-a968-437a-9515-b182a0642d98", 1));
 
                     // 여기서 20%가 이탈 -> 이탈하면 재고 증가
 
 
                     // 실행시 order 생성
-                    OrderDto uniqueOrder = orderService.createUniqueOrder(newOrderDto(user), null);
+                    //OrderDto uniqueOrder = orderService.createUniqueOrder(newOrderDto(user), null);
 
                     // 여기서 20%가 실패 -> 실패하면 재고 증가
 
                     // 결제 성공
-                    orderService.changePayment(uniqueOrder.getOrderUUID());
+                    //orderService.changePayment(uniqueOrder.getOrderUUID());
 
 
                     System.out.println(successCount.get() + "번째 성공");

@@ -41,7 +41,7 @@ public class ProductStatusScheduling {
     }
 
     @Transactional
-    @Scheduled(fixedRate = 60000, initialDelay = 3000)
+    @Scheduled(fixedRate = 6000000, initialDelay = 3000)
     public void cacheSchedule() {
         List<Product> products = productRepository.findAll();
 

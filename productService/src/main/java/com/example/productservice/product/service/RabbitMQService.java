@@ -21,7 +21,7 @@ public class RabbitMQService {
     @Transactional
     public void receive(List<Content> contents) {
         for (Content content : contents) {
-            Product product = productRepository.findByProductUUIDForUpdate(content.getProductUUID());
+            Product product = productRepository.findByProductUUID(content.getProductUUID());
 
             if (product == null) {
                 throw new RuntimeException("상품이 존재하지 않습니다");
