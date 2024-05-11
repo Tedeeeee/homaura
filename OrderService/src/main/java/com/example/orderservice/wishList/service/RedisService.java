@@ -1,16 +1,9 @@
 package com.example.orderservice.wishList.service;
 
-import com.example.orderservice.order.dto.OrderDto;
 import com.example.orderservice.order.entity.Content;
-import org.redisson.api.RLock;
-import org.redisson.api.RTransaction;
-import org.redisson.api.RLock;
-import org.redisson.api.RTransaction;
-import org.springframework.transaction.TransactionStatus;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public interface RedisService {
     Map<String, String> getAllList(String key);
@@ -20,8 +13,7 @@ public interface RedisService {
 
     // 재고 관련
     String getHashValue(String key, String field);
-    String getValue(String key);
-    void increaseCount(String key, int value);
-    void decreaseCount(List<Content> contents);
+    void decreaseCount(Content content);
+    void increaseCount(List<Content> contents);
 }
 

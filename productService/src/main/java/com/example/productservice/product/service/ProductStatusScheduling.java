@@ -20,7 +20,6 @@ public class ProductStatusScheduling {
 
     private final ProductRepository productRepository;
     private final RedisService redisService;
-    private final ProductServiceImpl productService;
 
     @Transactional
     @Scheduled(cron = "0 */1 * * * *")
@@ -49,7 +48,6 @@ public class ProductStatusScheduling {
 
         for (Product product : products) {
             if (product.getStatus().equals(Status.OPEN)) {
-                redisService.setKey(product.getProductUUID());
                 redisService.hSetValues("product", product.getProductUUID(), String.valueOf(product.getStock()));
             }
         }

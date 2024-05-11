@@ -37,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    //cd@Retry(name = "retry", fallbackMethod = "retryFallback")
+    //@Retry(name = "retry", fallbackMethod = "retryFallback")
     //@CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
     public String createOrder(OrderDto orderDto) {
 
@@ -56,10 +56,15 @@ public class OrderServiceImpl implements OrderService {
     //@CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
     public String createOrders(OrderDto orderDto) {
 
-        redissonLockStockFacade.increase(orderDto.getProducts());
+        redissonLockStockFacade.checkCount(orderDto.getProducts());
 
+        // Feign
         //productServiceClient.decreaseCount(orderDto.getProducts());
+
+        // RabbitMQ
         //rabbitMQService.sendStock(orderDto.getProducts());
+
+        // Kafka
         kafkaProducerService.send("product-topic", orderDto.getProducts());
 
         Order order = orderMapStruct.changeEntity(orderDto);
