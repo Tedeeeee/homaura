@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -39,9 +42,24 @@ public class InternalController {
         return responseProduct;
     }
 
-    @PutMapping("/increase")
-    public int increaseProductCount(@RequestBody Content content) {
-        return productService.increaseCount(content);
+    @PutMapping("/decrease")
+    public void decreaseProductCount(@RequestBody List<Content> contents) {
+        System.out.println("feign");
+        for (Content content : contents) {
+            Product product = productRepository.findByProductUUID(content.getProductUUID());
+
+            if (product == null) {
+                throw new RuntimeException("상품이 존재하지 않습니다");
+            }
+
+            if (product.getStock() < content.getUnitCount()) {
+                throw new RuntimeException("상품의 재고가 남아있지 않습니다");
+            }
+
+            product.decreaseStock(content.getUnitCount());
+
+            productRepository.save(product);
+        }
     }
 }
 

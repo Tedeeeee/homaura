@@ -1,5 +1,8 @@
 package com.example.orderservice.wishList.service;
 
+import com.example.orderservice.order.entity.Content;
+
+import java.util.List;
 import java.util.Map;
 
 public interface RedisService {
@@ -10,7 +13,7 @@ public interface RedisService {
 
     // 재고 관련
     String getHashValue(String key, String field);
-    String getValue(String key);
-    void increaseCount(String key, int value);
+    void decreaseCount(Content content);
+    void increaseCount(List<Content> contents);
 }
 
