@@ -17,7 +17,9 @@ public enum ErrorCode {
     MISSING_REQUEST_PARAMETER_ERROR(400, "Request Parameter가 존재하지 않습니다"),
     IO_ERROR(400, "I/O 문제"),
     NOT_FOUND_ERROR(404, "Not Found Exception"),
-    NULL_POINT_ERROR(404, "Null Pointer Exception")
+    NULL_POINT_ERROR(404, "Null Pointer Exception"),
+
+    BUSINESS_EXCEPTION_ERROR(500, "서비스에 문제 발생")
     ;
 
     private final int status;
