@@ -22,4 +22,8 @@ public class Coupon {
     private String name;
     private int discount;
     private int quantity;
+
+    public void decreaseCount() {
+        this.quantity--;
+    }
 }
