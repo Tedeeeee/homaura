@@ -41,4 +41,9 @@ public class CouponController {
         String memberUUID = UUID.randomUUID().toString();
         eventService.eventStart(couponUUID, memberUUID);
     }
+
+    @GetMapping("/test")
+    public void testControl() {
+        eventService.enter();
+    }
 }

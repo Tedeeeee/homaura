@@ -2,6 +2,7 @@ package com.example.couponservice.service;
 
 import com.example.couponservice.Entity.Coupon;
 import com.example.couponservice.repository.CouponRepository;
+import com.example.couponservice.vo.SendCoupon;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,6 +19,7 @@ public class EventService {
     private final RedisTemplate<String, String> redisTemplate;
     private final CouponService couponService;
     private final CouponRepository couponRepository;
+    private final KafkaProducerService kafkaProducerService;
 
     // 이벤트는 무조건 한번에 한개의 이벤트가 끝나기 전까지 다른 이벤트가 발생하지 않는다.
     public void eventStart(String couponUUID, String memberUUID) {
@@ -43,15 +45,23 @@ public class EventService {
 
         for (String memberUUID : participationQueue) {
             if (isEnd(couponUUID)) {
-                endEvent();
                 return;
             }
 
             // 쿠폰 잔여 갯수 내리기
             if (!couponService.decreaseStock(couponUUID)) break;
             redisTemplate.opsForZSet().remove(couponUUID, memberUUID);
-            // Kafka를 통해 사용자의 쿠폰 테이블 데이터 넣기
 
+            Coupon coupon = couponRepository.findByCouponUUID(couponUUID);
+
+            SendCoupon sendCoupon = SendCoupon.builder()
+                    .couponUUID(couponUUID)
+                    .memberUUID(memberUUID)
+                    .discount(coupon.getDiscount())
+                    .build();
+
+            // kafka 사용
+            kafkaProducerService.send("coupon-topic", sendCoupon);
 
             log.info("{}님의 응답 제출이 완료되었습니다. 쿠폰 : {}", memberUUID, couponUUID);
         }
@@ -92,6 +102,8 @@ public class EventService {
                 log.info("{}님에게 마감 소식 알림", waitingPerson);
                 redisTemplate.opsForZSet().remove(couponUUID, waitingPerson);
             }
+
+            endEvent();
             return true;
         }
         return false;
