@@ -2,9 +2,6 @@ package com.example.couponservice.service;
 
 import com.example.couponservice.Entity.Coupon;
 import com.example.couponservice.dto.CouponDto;
-import com.example.couponservice.global.exception.BusinessExceptionHandler;
-import com.example.couponservice.global.exception.ErrorCode;
-import com.example.couponservice.mapstruct.CouponMapStruct;
 import com.example.couponservice.repository.CouponRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +9,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -20,30 +18,36 @@ import java.util.Set;
 public class CouponServiceImpl implements CouponService{
 
     private final CouponRepository couponRepository;
-    private final CouponMapStruct couponMapStruct;
     private final RedisTemplate<String, String> redisTemplate;
 
     @Override
     @Transactional
     public int createCoupon(CouponDto couponDto) {
-        Coupon coupon = couponMapStruct.changeEntity(couponDto);
+
+        Coupon coupon = Coupon.builder()
+            .couponUUID(UUID.randomUUID().toString())
+            .name(couponDto.getName())
+            .discount(couponDto.getDiscount())
+            .quantity(couponDto.getQuantity())
+            .startTime(LocalDateTime.parse(couponDto.getStartTime()))
+            .build();
 
         couponRepository.save(coupon);
 
-        // set 의 데이터로 등록한 상품
-        redisTemplate.opsForSet().add("event", coupon.getCouponUUID());
         return 1;
     }
 
     @Override
     @Transactional
-    public void decreaseStock(String couponUUID) {
+    public boolean decreaseStock(String couponUUID) {
         Coupon coupon = couponRepository.findByCouponUUIDForUpdate(couponUUID);
 
         if (coupon.getQuantity() == 0) {
-            throw new BusinessExceptionHandler("재고가 부족합니다",ErrorCode.BUSINESS_EXCEPTION_ERROR);
+            return false;
         }
+
         coupon.decreaseCount();
+        return true;
     }
 
 

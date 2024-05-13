@@ -26,7 +26,6 @@ public class ErrorResponse {
     protected ErrorResponse(final ErrorCode code) {
         this.resultMsg = code.getMessage();
         this.status = code.getStatus();
-        this.divisionCode = code.getDivisionCode();
         this.errors = new ArrayList<>();
     }
 
@@ -38,7 +37,6 @@ public class ErrorResponse {
     protected ErrorResponse(final ErrorCode code, final String reason) {
         this.resultMsg = code.getMessage();
         this.status = code.getStatus();
-        this.divisionCode = code.getDivisionCode();
         this.reason = reason;
     }
 
@@ -50,7 +48,6 @@ public class ErrorResponse {
     protected ErrorResponse(final ErrorCode code, final List<FieldError> errors) {
         this.resultMsg = code.getMessage();
         this.status = code.getStatus();
-        this.divisionCode = code.getDivisionCode();
         this.errors = errors;
     }
 

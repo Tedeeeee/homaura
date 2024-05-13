@@ -35,7 +35,7 @@ public class EventService {
 
         if (couponUUID == null) return;
 
-        Set<String> participationQueue = redisTemplate.opsForZSet().range(couponUUID, 0, 10);
+        Set<String> participationQueue = redisTemplate.opsForZSet().range(couponUUID, 0, 9);
 
         if (participationQueue == null) {
             return;
@@ -48,9 +48,10 @@ public class EventService {
             }
 
             // 쿠폰 잔여 갯수 내리기
-            couponService.decreaseStock(couponUUID);
+            if (!couponService.decreaseStock(couponUUID)) break;
             redisTemplate.opsForZSet().remove(couponUUID, memberUUID);
             // Kafka를 통해 사용자의 쿠폰 테이블 데이터 넣기
+
 
             log.info("{}님의 응답 제출이 완료되었습니다. 쿠폰 : {}", memberUUID, couponUUID);
         }
@@ -69,12 +70,16 @@ public class EventService {
 
         for (String memberUUID : waitingQueue) {
             Long rank = redisTemplate.opsForZSet().rank(couponUUID, memberUUID);
-            log.info("{} 님의 현재 대기번호는 {}입니다", memberUUID, rank);
+            log.info("{} 님의 현재 대기번호는 {}입니다", memberUUID, rank + 1);
         }
+        Long waitingQueueSize = getWaitingQueueSize(couponUUID);
+        log.info("남은 인원 수 : {}", waitingQueueSize);
     }
 
     private boolean isEnd(String couponUUID) {
         Coupon coupon = couponRepository.findByCouponUUID(couponUUID);
+
+        if (coupon == null) return false;
 
         if (coupon.getQuantity() == 0) {
             Set<String> waitingPeople = redisTemplate.opsForZSet().range(couponUUID, 0, -1);
@@ -83,14 +88,21 @@ public class EventService {
                 return true;
             }
 
-            for (Object waitingPerson : waitingPeople) {
+            for (String waitingPerson : waitingPeople) {
                 log.info("{}님에게 마감 소식 알림", waitingPerson);
+                redisTemplate.opsForZSet().remove(couponUUID, waitingPerson);
             }
             return true;
         }
         return false;
     }
+
+    public Long getWaitingQueueSize(String couponUUID) {
+        return redisTemplate.opsForZSet().size(couponUUID);
+    }
+
     private void endEvent() {
-        redisTemplate.expire("event", 30, TimeUnit.MINUTES);
+        CouponScheduler.flag = false;
+        redisTemplate.expire("event", 3, TimeUnit.MINUTES);
     }
 }

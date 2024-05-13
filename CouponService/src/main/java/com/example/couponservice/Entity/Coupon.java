@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @AllArgsConstructor
@@ -22,6 +24,7 @@ public class Coupon {
     private String name;
     private int discount;
     private int quantity;
+    private LocalDateTime startTime;
 
     public void decreaseCount() {
         this.quantity--;

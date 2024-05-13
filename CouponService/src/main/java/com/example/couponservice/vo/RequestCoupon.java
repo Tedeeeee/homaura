@@ -7,4 +7,5 @@ public class RequestCoupon {
     private String name;
     private int discount;
     private int quantity;
+    private String startTime;
 }
