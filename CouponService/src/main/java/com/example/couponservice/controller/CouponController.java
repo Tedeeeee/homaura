@@ -35,15 +35,8 @@ public class CouponController {
     @GetMapping("")
     public void issuance(@RequestParam String couponUUID,
                          HttpServletRequest request) {
-        //String memberUUID = request.getHeader("uuid");
+        String memberUUID = request.getHeader("uuid");
 
-        // test 용 memberUUID
-        String memberUUID = UUID.randomUUID().toString();
         eventService.eventStart(couponUUID, memberUUID);
-    }
-
-    @GetMapping("/test")
-    public void testControl() {
-        eventService.enter();
     }
 }

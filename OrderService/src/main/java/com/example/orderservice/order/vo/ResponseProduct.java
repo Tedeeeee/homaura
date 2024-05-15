@@ -1,13 +1,12 @@
 package com.example.orderservice.order.vo;
 
-
 import lombok.Data;
-
 @Data
 public class ResponseProduct {
     private String productUUID;
-    private int stock;
+    private String name;
     private int price;
-    private long totalPrice;
+    private int stock;
+    private String producer;
     private boolean uniqueItem;
 }

@@ -44,22 +44,18 @@ public class InternalController {
 
     @PutMapping("/decrease")
     public void decreaseProductCount(@RequestBody List<Content> contents) {
-        System.out.println("feign");
-        for (Content content : contents) {
-            Product product = productRepository.findByProductUUID(content.getProductUUID());
+        for (Content content : contents) productService.decreaseCount(content);
+    }
 
-            if (product == null) {
-                throw new RuntimeException("상품이 존재하지 않습니다");
-            }
+    @PutMapping("/increase")
+    public void increaseProductCount(@RequestBody List<Content> contents) {
+        for (Content content : contents) productService.increaseCount(content);
+    }
 
-            if (product.getStock() < content.getUnitCount()) {
-                throw new RuntimeException("상품의 재고가 남아있지 않습니다");
-            }
-
-            product.decreaseStock(content.getUnitCount());
-
-            productRepository.save(product);
-        }
+    @GetMapping("/checkCount")
+    boolean checkStock(@RequestParam String productUUID,
+                       @RequestParam int unitCount) {
+        return productService.checkStock(productUUID, unitCount);
     }
 }
 
