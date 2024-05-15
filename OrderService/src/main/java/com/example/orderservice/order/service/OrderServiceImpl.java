@@ -37,11 +37,6 @@ public class OrderServiceImpl implements OrderService {
     @Retry(name = "retry", fallbackMethod = "retryFallback")
     @CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
     public String createOrders(OrderDto orderDto) {
-        // Kafka
-        //redissonLockStockFacade.checkCount(orderDto.getProducts());
-        //kafkaProducerService.send("product-topic", orderDto.getProducts());
-
-        // Feign
         productServiceClient.decreaseCount(orderDto.getProducts());
 
         Order order = orderMapStruct.changeEntity(orderDto);
