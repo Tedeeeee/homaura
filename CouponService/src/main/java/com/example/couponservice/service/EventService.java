@@ -37,7 +37,7 @@ public class EventService {
 
         if (couponUUID == null) return;
 
-        Set<String> participationQueue = redisTemplate.opsForZSet().range(couponUUID, 0, 9);
+        Set<String> participationQueue = redisTemplate.opsForZSet().range(couponUUID, 0, -1);
 
         if (participationQueue == null) {
             return;

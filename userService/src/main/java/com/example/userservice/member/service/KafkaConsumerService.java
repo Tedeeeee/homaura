@@ -5,10 +5,10 @@ import com.example.userservice.member.entity.MemberCoupon;
 import com.example.userservice.member.repository.MemberCouponRepository;
 import com.example.userservice.member.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +18,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class KafkaConsumerService {
 
     private final MemberCouponRepository memberCouponRepository;
@@ -50,5 +51,6 @@ public class KafkaConsumerService {
                 .build();
 
         memberCouponRepository.save(memberCoupon);
+        log.info("{} 님의 쿠폰 처리 완료", memberUUID);
     }
 }
