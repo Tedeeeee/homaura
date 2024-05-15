@@ -16,4 +16,6 @@ public interface ProductService {
     int increaseCount(Content content);
 
     int decreaseCount(Content content);
+
+    boolean checkStock(String productUUID, int unitCount);
 }

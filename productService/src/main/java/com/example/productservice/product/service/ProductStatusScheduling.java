@@ -14,12 +14,16 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Slf4j
-@Component
+//@Component
 @RequiredArgsConstructor
 public class ProductStatusScheduling {
 
     private final ProductRepository productRepository;
     private final RedisService redisService;
+
+    /**
+     *  기획의 의도가 변경되면서 스케줄러를 사용하지 않게 됐다
+     */
 
     @Transactional
     @Scheduled(cron = "0 */1 * * * *")

@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableScheduling
 public class ProductServiceApplication {
 
     public static void main(String[] args) {

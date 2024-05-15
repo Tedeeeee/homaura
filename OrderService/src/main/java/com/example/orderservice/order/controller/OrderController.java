@@ -24,12 +24,12 @@ public class OrderController {
 
     // 상세 정보 입력 후 주문하기
     // 선착순 이벤트 주문하기
-    @PostMapping("/unique")
-    public ResponseEntity<String> createOrder(@Valid @RequestBody RequestOrder requestOrder, HttpServletRequest request) {
-        OrderDto orderDto = orderMapStruct.changeDto(requestOrder);
-        orderDto.setMemberUUID(request.getHeader("uuid"));
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(orderDto));
-    }
+//    @PostMapping("/unique")
+//    public ResponseEntity<String> createOrder(@Valid @RequestBody RequestOrder requestOrder, HttpServletRequest request) {
+//        OrderDto orderDto = orderMapStruct.changeDto(requestOrder);
+//        orderDto.setMemberUUID(request.getHeader("uuid"));
+//        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(orderDto));
+//    }
 
     // 일반 주문
     @PostMapping("")

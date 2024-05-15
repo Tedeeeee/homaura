@@ -7,6 +7,7 @@ import com.example.orderservice.order.entity.OrderProduct;
 import com.example.orderservice.order.entity.Status;
 import com.example.orderservice.order.repository.OrderProductRepository;
 import com.example.orderservice.order.repository.OrderRepository;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -63,10 +64,8 @@ public class OrderStatusScheduling {
     }
 
     public void updateProduct(Order order) {
-        List<OrderProduct> orderProductList = orderProductRepository.findByOrder(order);
-
-        for (OrderProduct orderProduct : orderProductList) {
-            productServiceClient.increaseCount(new Content(orderProduct.getProductUUID(), orderProduct.getUnitCount()));
-        }
+        orderProductRepository.findByOrder(order).stream()
+                .map(orderProduct -> new Content(orderProduct.getProductUUID(), orderProduct.getUnitCount()))
+                .forEach(productServiceClient::increaseCount);
     }
 }

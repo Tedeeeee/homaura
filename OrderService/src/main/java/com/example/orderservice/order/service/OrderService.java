@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface OrderService {
-    String createOrder(OrderDto orderDto);
+    //String createOrder(OrderDto orderDto);
     String createOrders(OrderDto orderDto);
 
     List<OrderDto> getOrderList(HttpServletRequest request);

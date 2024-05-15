@@ -18,7 +18,6 @@ import java.util.UUID;
 public class CouponServiceImpl implements CouponService{
 
     private final CouponRepository couponRepository;
-    private final RedisTemplate<String, String> redisTemplate;
 
     @Override
     @Transactional

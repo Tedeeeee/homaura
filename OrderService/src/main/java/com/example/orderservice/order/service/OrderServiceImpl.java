@@ -1,7 +1,7 @@
 package com.example.orderservice.order.service;
 
-import com.example.orderservice.global.Service.KafkaProducerService;
-import com.example.orderservice.global.Service.RabbitMQService;
+import com.example.orderservice.global.exception.BusinessExceptionHandler;
+import com.example.orderservice.global.exception.ErrorCode;
 import com.example.orderservice.order.client.ProductServiceClient;
 import com.example.orderservice.order.vo.ResponseProduct;
 import com.example.orderservice.order.dto.OrderDto;
@@ -31,41 +31,18 @@ public class OrderServiceImpl implements OrderService {
     private final OrderProductRepository orderProductRepository;
     private final OrderMapStruct orderMapStruct;
     private final ProductServiceClient productServiceClient;
-    private final RabbitMQService rabbitMQService;
-    private final KafkaProducerService kafkaProducerService;
-    private final RedissonLockStockFacade redissonLockStockFacade;
 
     @Override
     @Transactional
-    //@Retry(name = "retry", fallbackMethod = "retryFallback")
-    //@CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
-    public String createOrder(OrderDto orderDto) {
-
-        Order order = orderMapStruct.changeEntity(orderDto);
-
-        createOrderProduct(orderDto, order);
-
-        orderRepository.save(order);
-
-        return order.getOrderUUID();
-    }
-
-    @Override
-    @Transactional
-    //@Retry(name = "retry", fallbackMethod = "retryFallback")
-    //@CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
+    @Retry(name = "retry", fallbackMethod = "retryFallback")
+    @CircuitBreaker(name = "breaker", fallbackMethod = "fallback")
     public String createOrders(OrderDto orderDto) {
-
-        redissonLockStockFacade.checkCount(orderDto.getProducts());
+        // Kafka
+        //redissonLockStockFacade.checkCount(orderDto.getProducts());
+        //kafkaProducerService.send("product-topic", orderDto.getProducts());
 
         // Feign
-        //productServiceClient.decreaseCount(orderDto.getProducts());
-
-        // RabbitMQ
-        //rabbitMQService.sendStock(orderDto.getProducts());
-
-        // Kafka
-        kafkaProducerService.send("product-topic", orderDto.getProducts());
+        productServiceClient.decreaseCount(orderDto.getProducts());
 
         Order order = orderMapStruct.changeEntity(orderDto);
 
@@ -76,33 +53,14 @@ public class OrderServiceImpl implements OrderService {
         return order.getOrderUUID();
     }
 
-    private void createOrderProduct(OrderDto orderDto, Order order) {
-        long totalPrice = 0L;
-        for (Content content : orderDto.getProducts()) {
-            ResponseProduct product = productServiceClient.existProduct(content.getProductUUID());
-
-            OrderProduct orderProduct = OrderProduct.builder()
-                    .order(order)
-                    .productUUID(content.getProductUUID())
-                    .unitCount(content.getUnitCount())
-                    .build();
-            orderProductRepository.save(orderProduct);
-
-            totalPrice += (long) product.getPrice() * content.getUnitCount();
-        }
-        order.setTotalPrice(totalPrice);
-    }
-
-    private int fallback(OrderDto orderDto, HttpServletRequest request, Throwable t) {
-        log.info("FallBack 이 사용되었다.");
-        log.error("FallBack : " + t.getMessage());
-        throw new RuntimeException("상품 주문 실패");
-    }
-
-    private int retryFallback(OrderDto orderDto, HttpServletRequest request, Throwable t) {
-        log.info("retry 가 사용되었다.");
+    public int retryFallback(OrderDto orderDto, HttpServletRequest request, Throwable t) {
         log.error("retry : " + t.getMessage());
-        throw new RuntimeException("상품 주문 실패");
+        throw new BusinessExceptionHandler("상품 주문 실패", ErrorCode.BUSINESS_EXCEPTION_ERROR);
+    }
+
+    public int fallback(OrderDto orderDto, HttpServletRequest request, Throwable t) {
+        log.error("FallBack : " + t.getMessage());
+        throw new BusinessExceptionHandler("상품 주문 실패", ErrorCode.BUSINESS_EXCEPTION_ERROR);
     }
 
     @Override
@@ -125,11 +83,11 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findByOrderUUID(orderUUID);
 
         if (order == null) {
-            throw new RuntimeException("존재하지 않는 주문입니다");
+            throw new BusinessExceptionHandler("존재하지 않는 주문입니다", ErrorCode.BUSINESS_EXCEPTION_ERROR);
         }
 
         if (!order.getStatus().equals(Status.POSSIBLE)) {
-            throw new RuntimeException("주문을 취소 할 수 있는 날짜를 지났습니다");
+            throw new BusinessExceptionHandler("주문을 취소 할 수 있는 날짜를 지났습니다", ErrorCode.BUSINESS_EXCEPTION_ERROR);
         }
 
         try {
@@ -145,7 +103,7 @@ public class OrderServiceImpl implements OrderService {
             orderRepository.deleteById(order.getId());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("주문실패");
+            throw new BusinessExceptionHandler("주문실패", ErrorCode.BUSINESS_EXCEPTION_ERROR);
         }
 
         return "주문이 취소 되었습니다";
@@ -156,7 +114,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findByOrderUUID(orderUUID);
 
         if (!order.getStatus().equals(Status.REFUND)) {
-            throw new RuntimeException("반품 기간이 아닙니다");
+            throw new BusinessExceptionHandler("반품 기간이 아닙니다", ErrorCode.BUSINESS_EXCEPTION_ERROR);
         }
         order.transferStatus(3);
         order.updateTime();
@@ -171,6 +129,23 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findByOrderUUID(orderUUID);
         order.changePaymentStatus();
         return 1;
+    }
+
+    private void createOrderProduct(OrderDto orderDto, Order order) {
+        long totalPrice = 0L;
+        for (Content content : orderDto.getProducts()) {
+            ResponseProduct product = productServiceClient.existProduct(content.getProductUUID());
+
+            OrderProduct orderProduct = OrderProduct.builder()
+                    .order(order)
+                    .productUUID(content.getProductUUID())
+                    .unitCount(content.getUnitCount())
+                    .build();
+            orderProductRepository.save(orderProduct);
+
+            totalPrice += (long) product.getPrice() * content.getUnitCount();
+        }
+        order.setTotalPrice(totalPrice);
     }
 
     private OrderDto convertToDto(Order order) {

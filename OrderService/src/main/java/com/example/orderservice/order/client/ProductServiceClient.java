@@ -18,7 +18,4 @@ public interface ProductServiceClient {
 
     @PutMapping("/internal/decrease")
     void decreaseCount(@RequestBody List<Content> content);
-
-    @GetMapping("/internal/checkCount")
-    boolean checkCount(@RequestBody List<Content> contents);
 }

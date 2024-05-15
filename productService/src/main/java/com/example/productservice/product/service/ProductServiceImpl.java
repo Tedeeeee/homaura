@@ -16,7 +16,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Slf4j
 @Service
@@ -98,4 +97,15 @@ public class ProductServiceImpl implements ProductService{
 
         return 1;
     }
+
+    @Override
+    public boolean checkStock(String productUUID, int unitCount) {
+        Product product = productRepository.findByProductUUID(productUUID);
+
+        int result = product.getStock() - unitCount;
+
+        return result >= 0;
+    }
+
+
 }
