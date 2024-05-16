@@ -19,8 +19,7 @@ public interface OrderMapStruct {
     ResponseOrder changeResponse(OrderDto orderDto);
 
     @Mapping(target = "orderUUID", expression = "java(java.util.UUID.randomUUID().toString())")
-    @Mapping(target = "status", constant = "READY")
-    @Mapping(target = "payment", constant = "READY")
+    @Mapping(target = "status", constant = "POSSIBLE")
     @Mapping(target = "createAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "updateAt", expression = "java(java.time.LocalDateTime.now())")
     Order changeEntity(OrderDto orderDto);

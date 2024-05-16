@@ -16,5 +16,4 @@ public interface OrderService {
 
     String refundOrder(String orderUUID);
 
-    int changePayment(String orderUUID);
 }

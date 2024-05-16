@@ -57,10 +57,4 @@ public class OrderController {
     public ResponseEntity<String> refundOrder(@RequestParam String orderUUID) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.refundOrder(orderUUID));
     }
-
-    // 결제 완료
-    @GetMapping("/statusPayment")
-    public ResponseEntity<Integer> changePayment(@RequestParam String orderUUID) {
-        return ResponseEntity.status(HttpStatus.OK).body(orderService.changePayment(orderUUID));
-    }
 }

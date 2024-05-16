@@ -89,16 +89,16 @@ public class OrderServiceImpl implements OrderService {
             List<OrderProduct> orderProductList = order.getOrderProductList();
 
             for (OrderProduct orderProduct : orderProductList) {
-                // 각각의 상품의 주문 갯수 만큼 다시 product 테이블
                 String productUUID = orderProduct.getProductUUID();
 
+                // 각각의 상품의 주문 갯수 만큼 다시 product에 넣어주기
                 productServiceClient.increaseCount(new Content(productUUID, orderProduct.getUnitCount()));
             }
 
             orderRepository.deleteById(order.getId());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new BusinessExceptionHandler("주문실패", ErrorCode.BUSINESS_EXCEPTION_ERROR);
+            throw new BusinessExceptionHandler(e.getMessage(), ErrorCode.BUSINESS_EXCEPTION_ERROR);
         }
 
         return "주문이 취소 되었습니다";
@@ -116,14 +116,6 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.save(order);
         return "반품이 진행됩니다";
-    }
-
-    @Override
-    @Transactional
-    public int changePayment(String orderUUID) {
-        Order order = orderRepository.findByOrderUUID(orderUUID);
-        order.changePaymentStatus();
-        return 1;
     }
 
     private void createOrderProduct(OrderDto orderDto, Order order) {

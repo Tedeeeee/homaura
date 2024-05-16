@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -48,8 +47,8 @@ public class InternalController {
     }
 
     @PutMapping("/increase")
-    public void increaseProductCount(@RequestBody List<Content> contents) {
-        for (Content content : contents) productService.increaseCount(content);
+    public void increaseCount(@RequestBody Content content) {
+        productService.increaseCount(content);
     }
 
     @GetMapping("/checkCount")

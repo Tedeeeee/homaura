@@ -1,12 +1,13 @@
 package com.example.userservice.member.service;
 
+import com.example.userservice.member.client.CouponServiceClient;
 import com.example.userservice.member.dto.MemberDto;
 import com.example.userservice.member.entity.Member;
+import com.example.userservice.member.entity.MemberCoupon;
 import com.example.userservice.member.mapstruct.MemberMapStruct;
+import com.example.userservice.member.repository.MemberCouponRepository;
 import com.example.userservice.member.repository.MemberRepository;
-import com.example.userservice.member.vo.RequestCheck;
-import com.example.userservice.member.vo.RequestPassword;
-import com.example.userservice.member.vo.ResponseMember;
+import com.example.userservice.member.vo.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +16,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
+    private final MemberCouponRepository memberCouponRepository;
     private final MemberMapStruct memberMapStruct;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RedisService redisService;
+    private final CouponServiceClient couponServiceClient;
 
     @Override
     public String checkNickname(RequestCheck requestCheck) {
@@ -109,5 +115,21 @@ public class MemberServiceImpl implements MemberService {
 
         // 여기서 회원이 주문한 상품을 묶어서 전달해준다.
         return memberMapStruct.changeMemberDto(member);
+    }
+
+    @Override
+    public ResponseCoupon getMyCoupon(String memberUUID) {
+        Member member = memberRepository.findByMemberUUID(memberUUID);
+
+        List<MemberCoupon> myCoupon = memberCouponRepository.findByMemberId(member.getId());
+
+        List<ReceiveCoupon> list = new ArrayList<>();
+        for (MemberCoupon memberCoupon : myCoupon) {
+            Coupon coupon = couponServiceClient.findCoupon(memberCoupon.getCouponUUID());
+            ReceiveCoupon receiveCoupon = new ReceiveCoupon(coupon.getName(), coupon.getDiscount());
+            list.add(receiveCoupon);
+        }
+
+        return new ResponseCoupon(list.size(), list);
     }
 }

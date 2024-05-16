@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/")
@@ -63,5 +65,12 @@ public class MemberController {
     @GetMapping("/users")
     public ResponseEntity<ResponseMember> getUser(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(memberMapStruct.changeResponse(memberService.getUser(request)));
+    }
+
+    // 사용자 쿠폰 조회
+    @GetMapping("/myCoupon")
+    public ResponseEntity<ResponseCoupon> getMyCoupon(HttpServletRequest request) {
+        String uuid = request.getHeader("uuid");
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.getMyCoupon(uuid));
     }
 }
