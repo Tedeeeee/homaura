@@ -45,7 +45,11 @@ public class TokenUtil {
     // accessToken 만료기간
     private static Date createAccessTokenExpiredDate() {
         Calendar c = Calendar.getInstance();
+<<<<<<< HEAD:userService/src/main/java/com/example/userservice/security/utils/TokenUtil.java
         c.add(Calendar.HOUR_OF_DAY, 1);
+=======
+        c.add(Calendar.MINUTE, 50);
+>>>>>>> main:src/main/java/com/shoppingmall/homaura/security/utils/TokenUtil.java
         return c.getTime();
     }
 
