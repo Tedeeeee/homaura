@@ -1,0 +1,86 @@
+server:
+  port: 8083
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+spring:
+  application:
+    name: apigatewayServer
+
+  cloud:
+    gateway:
+      routes:
+        - id: productService-unique
+          uri: lb://PRODUCTSERVICE
+          predicates:
+            - Path=/productService/unique
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/productService/(?<segment>.*), /${segment}
+            - AuthorizationHeaderFilter
+        - id: productService
+          uri: lb://PRODUCTSERVICE
+          predicates:
+            - Path=/productService/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/productService/(?<segment>.*), /${segment}
+        - id: userService
+          uri: lb://USERSERVICE
+          predicates:
+            - Path=/userService/**
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/userService/(?<segment>.*), /${segment}
+        - id: userService-checkFilter
+          uri: lb://USERSERVICE
+          predicates:
+            - Path=/userService/**
+            - Method=GET, PUT
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/userService/(?<segment>.*), /${segment}
+            - AuthorizationHeaderFilter
+        - id: orderService
+          uri: lb://ORDERSERVICE
+          predicates:
+            - Path=/orderService/**
+            - Method=GET, PUT, POST, DELETE
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/orderService/(?<segment>.*), /${segment}
+            - AuthorizationHeaderFilter
+        - id: couponService
+          uri: lb://COUPONSERVICE
+          predicates:
+            - Path=/couponService/**
+            - Method=GET, PUT, POST, DELETE
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/couponService/(?<segment>.*), /${segment}
+            - AuthorizationHeaderFilter
+        - id: wishListService
+          uri: lb://WISHLISTSERVICE
+          predicates:
+            - Path=/wishListService/**
+            - Method=GET, PUT, POST, DELETE
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/wishListService/(?<segment>.*), /${segment}
+            - AuthorizationHeaderFilter
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, info, busrefresh

@@ -36,7 +36,7 @@ public class Order {
     private LocalDateTime updateAt;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrderProduct> orderProductList = new ArrayList<>();
+    private final List<OrderProduct> orderProductList = new ArrayList<>();
 
     public void setTotalPrice(Long totalPrice) {
         this.totalPrice = totalPrice;
