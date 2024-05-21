@@ -1,0 +1,75 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: orderService
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+  datasource:
+    url: jdbc:mysql://127.0.0.1:13308/orders?serverTimezone=Asia/Seoul
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka
+
+resilience4j:
+  circuit breaker:
+    circuit-breaker-aspect-order: 1
+    instances:
+      breaker:
+        base-config: default
+    configs:
+      default:
+        sliding-window-size: 10
+        sliding-window-type: count_based
+        failure-rate-threshold: 40
+        wait-duration-in-open-state: 20000
+        minimum-number-of-calls: 5
+        register-health-indicator: true
+  retry:
+    retry-aspect-order: 2
+    instances:
+      retry:
+        base-config: default
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 3000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, info, busrefresh
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuit-breakers:
+      enabled: true
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: trace

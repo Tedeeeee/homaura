@@ -31,12 +31,16 @@ public class CouponScheduler {
 
     @Scheduled(cron = "0 */1 * * * *")
     public void startEventTime() {
+        System.out.println("쿠폰 이벤트 발생");
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        System.out.println("now = " + now);
         List<Coupon> all = couponRepository.findAll();
 
         for (Coupon coupon : all) {
             LocalDateTime startTime = coupon.getStartTime();
+            System.out.println("startTime = " + startTime);
             if (startTime.equals(now)) {
+                System.out.println("쿠폰 생성");
                 redisTemplate.opsForValue().set("event", coupon.getCouponUUID());
                 flag = true;
                 break;
