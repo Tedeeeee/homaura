@@ -9,6 +9,10 @@ spring:
     port: 5672
     username: guest
     password: guest
+  datasource:
+    url: jdbc:mysql://127.0.0.1:13308/orders?serverTimezone=Asia/Seoul
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     database: mysql
@@ -29,6 +33,30 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
+
+resilience4j:
+  circuit breaker:
+    circuit-breaker-aspect-order: 1
+    instances:
+      breaker:
+        base-config: default
+    configs:
+      default:
+        sliding-window-size: 10
+        sliding-window-type: count_based
+        failure-rate-threshold: 40
+        wait-duration-in-open-state: 20000
+        minimum-number-of-calls: 5
+        register-health-indicator: true
+  retry:
+    retry-aspect-order: 2
+    instances:
+      retry:
+        base-config: default
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 3000
 
 management:
   endpoints:

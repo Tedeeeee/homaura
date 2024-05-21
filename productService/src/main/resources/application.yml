@@ -9,6 +9,10 @@ spring:
     port: 5672
     username: guest
     password: guest
+  datasource:
+    url: jdbc:mysql://127.0.0.1:13307/product?serverTimezone=Asia/Seoul
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     database: mysql
