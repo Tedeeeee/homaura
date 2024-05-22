@@ -1,0 +1,47 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: userService
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+  datasource:
+    url: jdbc:mysql://127.0.0.1:13306/member?useSSL=false
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+  kafka:
+    bootstrap-servers: 127.0.0.1:29092
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, info, busrefresh
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: trace
