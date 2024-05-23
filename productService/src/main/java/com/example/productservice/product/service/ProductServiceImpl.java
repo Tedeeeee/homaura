@@ -106,6 +106,4 @@ public class ProductServiceImpl implements ProductService{
 
         return result >= 0;
     }
-
-
 }
