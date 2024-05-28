@@ -8,5 +8,4 @@ public class RequestProduct {
     private int price;
     private int stock;
     private String producer;
-    private String reservationTime;
 }

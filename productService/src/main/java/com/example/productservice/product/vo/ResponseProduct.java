@@ -10,5 +10,4 @@ public class ResponseProduct {
     private int price;
     private int stock;
     private String producer;
-    private boolean uniqueItem;
 }
