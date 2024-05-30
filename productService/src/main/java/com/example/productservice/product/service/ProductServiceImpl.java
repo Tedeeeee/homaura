@@ -1,11 +1,13 @@
 package com.example.productservice.product.service;
 
+import com.example.productservice.product.dto.PageResponseDto;
 import com.example.productservice.product.dto.ProductDto;
 import com.example.productservice.product.entity.Product;
 import com.example.productservice.product.entity.ProductStock;
 import com.example.productservice.product.mapstruct.ProductMapStruct;
 import com.example.productservice.product.repository.ProductRepository;
 import com.example.productservice.product.repository.ProductStockRepository;
+import com.example.productservice.product.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -67,8 +70,8 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Page<ProductDto> getProductByName(String productName,int pageNum, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNum, pageSize);
+    public Page<ProductDto> getProductByName(String productName, int pageNum) {
+        Pageable pageable = PageRequest.of(pageNum, 20);
         Page<Product> pageBy = productRepository.findPageByNameContaining(productName, pageable);
         return pageBy.map(productMapStruct::changeDto);
     }

@@ -1,5 +1,6 @@
 package com.example.productservice.product.controller;
 
+import com.example.productservice.product.dto.PageResponseDto;
 import com.example.productservice.product.dto.ProductDto;
 import com.example.productservice.product.entity.Content;
 import com.example.productservice.product.mapstruct.ProductMapStruct;
@@ -15,6 +16,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,11 +49,18 @@ public class ProductController {
     }
 
     // 검색한 상품 확인 시 페이징 처리
+    @Cacheable(cacheNames = "products", key = "#productName + #num")
     @GetMapping("/{productName}/search")
-    public ResponseEntity<Page<ResponseProduct>> getProductByName(@PathVariable String productName,
-                                                                  @RequestParam(defaultValue = "0") int num,
-                                                                  @RequestParam(defaultValue = "10") int size) {
-        Page<ProductDto> productByName = productService.getProductByName(productName, num, size);
-        return ResponseEntity.status(HttpStatus.OK).body(productByName.map(productMapStruct::changeResponse));
+    public ResponseEntity<PageResponseDto<ResponseProduct>> getProductByName(@PathVariable String productName,@RequestParam(defaultValue = "0") int num) {
+        Page<ProductDto> pageBy = productService.getProductByName(productName, num);
+        List<ResponseProduct> responseProducts = pageBy.getContent().stream()
+                .map(productMapStruct::changeResponse)
+                .collect(Collectors.toList());
+
+        PageResponseDto<ResponseProduct> response = new PageResponseDto<>(
+                responseProducts, pageBy.getNumber(), pageBy.getSize(), pageBy.getTotalElements()
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
