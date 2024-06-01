@@ -32,20 +32,20 @@ public class EventService {
 
     // 참가열에 있는 사용자중 10명을 처리하고
     // 대기열에서 참가열로 10명을 넣기
-    public void enter() {
+    public boolean enter() {
         String couponUUID = redisTemplate.opsForValue().get("event");
 
-        if (couponUUID == null) return;
+        if (couponUUID == null) return false;
 
         Set<String> participationQueue = redisTemplate.opsForZSet().range(couponUUID, 0, -1);
 
-        if (participationQueue == null) {
-            return;
-        }
+        System.out.println("participationQueue = " + participationQueue);
+
+        if (isEnd(couponUUID)) return false;
 
         for (String memberUUID : participationQueue) {
             if (isEnd(couponUUID)) {
-                return;
+                return false;
             }
 
             // 쿠폰 잔여 갯수 내리기
@@ -65,25 +65,25 @@ public class EventService {
 
             log.info("{}님의 응답 제출이 완료되었습니다. 쿠폰 : {}", memberUUID, couponUUID);
         }
+        return true;
     }
 
     // 대기열 순번 안내
-    public void getOrder() {
+    public boolean getOrder() {
         String couponUUID = redisTemplate.opsForValue().get("event");
 
-        if (couponUUID == null) return;
-        if (isEnd(couponUUID)) return;
+        if (couponUUID == null) return false;
+        if (isEnd(couponUUID)) return false;
 
         Set<String> waitingQueue = redisTemplate.opsForZSet().range(couponUUID, 0, 9);
-
-        if (waitingQueue == null) return;
 
         for (String memberUUID : waitingQueue) {
             Long rank = redisTemplate.opsForZSet().rank(couponUUID, memberUUID);
             log.info("{} 님의 현재 대기번호는 {}입니다", memberUUID, rank + 1);
         }
-        Long waitingQueueSize = getWaitingQueueSize(couponUUID);
-        log.info("남은 인원 수 : {}", waitingQueueSize);
+        log.info("남은 인원 수 : {}", getWaitingQueueSize(couponUUID));
+
+        return true;
     }
 
     private boolean isEnd(String couponUUID) {
@@ -114,7 +114,6 @@ public class EventService {
     }
 
     private void endEvent() {
-        CouponScheduler.flag = false;
         redisTemplate.expire("event", 3, TimeUnit.MINUTES);
     }
 }

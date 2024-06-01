@@ -6,6 +6,7 @@ import com.example.productservice.product.entity.Product;
 import com.example.productservice.product.mapstruct.ProductMapStruct;
 import com.example.productservice.product.repository.ProductRepository;
 import com.example.productservice.product.service.ProductService;
+import com.example.productservice.product.service.ProductStockService;
 import com.example.productservice.product.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ public class InternalController {
     private final ProductRepository productRepository;
     private final ProductMapStruct productMapStruct;
     private final ProductService productService;
+    private final ProductStockService productStockService;
 
     @Transactional
     @GetMapping("/{productUUID}")
@@ -35,26 +37,23 @@ public class InternalController {
 
         ProductDto productDto = productMapStruct.changeDto(product);
         ResponseProduct responseProduct = productMapStruct.changeResponse(productDto);
-        if (product.getReservationTime() != null) {
-            responseProduct.setUniqueItem(true);
-        }
         return responseProduct;
     }
 
     @PutMapping("/decrease")
     public void decreaseProductCount(@RequestBody List<Content> contents) {
-        for (Content content : contents) productService.decreaseCount(content);
+        for (Content content : contents) productStockService.decreaseCount(content);
     }
 
     @PutMapping("/increase")
     public void increaseCount(@RequestBody Content content) {
-        productService.increaseCount(content);
+        productStockService.increaseCount(content);
     }
 
     @GetMapping("/checkCount")
     boolean checkStock(@RequestParam String productUUID,
                        @RequestParam int unitCount) {
-        return productService.checkStock(productUUID, unitCount);
+        return productStockService.checkStock(productUUID, unitCount);
     }
 }
 
