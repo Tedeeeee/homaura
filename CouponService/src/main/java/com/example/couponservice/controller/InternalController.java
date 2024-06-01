@@ -3,7 +3,6 @@ package com.example.couponservice.controller;
 import com.example.couponservice.Entity.Coupon;
 import com.example.couponservice.repository.CouponRepository;
 import com.example.couponservice.service.EventService;
-import com.example.couponservice.vo.SendCoupon;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;

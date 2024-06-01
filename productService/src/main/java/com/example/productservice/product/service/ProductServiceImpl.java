@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -64,9 +65,17 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Slice<ProductDto> getProducts(Pageable pageable) {
-        Slice<Product> sliceBy = productRepository.findSliceBy(pageable);
-        return sliceBy.map(productMapStruct::changeDto);
+    public List<ProductDto> getProducts() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(productMapStruct::changeDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<ProductDto> getProducts(int pageNum) {
+        Page<Product> pageBy = productRepository.findPageBy(PageRequest.of(pageNum, 20));
+        return pageBy.map(productMapStruct::changeDto);
     }
 
     @Override

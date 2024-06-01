@@ -1,7 +1,6 @@
 package com.example.schedulerservice.scheduler;
 
 import com.example.schedulerservice.client.CouponServiceClient;
-import com.example.schedulerservice.service.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

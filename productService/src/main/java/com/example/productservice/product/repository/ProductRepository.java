@@ -7,10 +7,14 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Product findByProductUUID(String productUUID);
-    Slice<Product> findSliceBy(Pageable pageable);
+    List<Product> findAll();
+    Page<Product> findPageBy(Pageable pageable);
+
     Page<Product> findPageByNameContaining(String productName, Pageable pageable);
 }
