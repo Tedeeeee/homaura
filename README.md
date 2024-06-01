@@ -61,7 +61,7 @@
 
 전체 프로젝트 관련 글은 해당 <u>[블로그](https://latewalk.tistory.com/category/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%ED%95%AD%ED%95%B499%20%EA%B0%9C%EC%9D%B8%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8)</u>에서 모두 확인하실 수 있습니다
 ## 🗂 ERD
-![image](https://github.com/Tedeeeee/homaura/assets/118357403/023cc1c8-2680-43cb-a878-38270f55dab0)
+![화면 캡처 2024-06-01 185924](https://github.com/Tedeeeee/homaura/assets/118357403/1d80d9a7-225d-4755-8070-a5684b0ff941)
 https://drawsql.app/teams/shopingmall/diagrams/shopdiagram
 
 ## 📚 API 문서
