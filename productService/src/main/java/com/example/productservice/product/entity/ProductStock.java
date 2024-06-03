@@ -3,24 +3,24 @@ package com.example.productservice.product.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "product")
+@Table(name = "productStock")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @ToString
-public class Product {
+public class ProductStock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String productUUID;
-    private String name;
-    private int price;
-    private String producer;
-    private LocalDateTime createAt;
+    private int stock;
+
+    public void increaseStock(int count) {
+        this.stock += count;
+    }
+    public void decreaseStock(int count) { this.stock -= count; }
 }

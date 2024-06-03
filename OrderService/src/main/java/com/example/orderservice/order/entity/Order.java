@@ -43,6 +43,7 @@ public class Order {
     }
 
     public void transferStatus(int day) {
+
         switch (day) {
             case 1 -> this.status = Status.SHIPPING;
             case 2 -> this.status = Status.REFUND;

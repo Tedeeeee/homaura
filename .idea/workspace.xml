@@ -5,12 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6cd724ce-c1cb-42b2-b022-90c76e0f9aff" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apigatewayServer/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/apigatewayServer/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apigatewayServer/src/main/resources/bootstrap.yml" beforeDir="false" afterPath="$PROJECT_DIR$/apigatewayServer/src/main/resources/bootstrap.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/productService/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/productService/src/main/resources/bootstrap.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/userService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/userService/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/product/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/product/entity/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/product/repository/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/product/repository/ProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/product/service/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/productService/src/main/java/com/example/productservice/product/service/ProductServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,6 +29,9 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2ga7vhxOrjskDm7wBKEh85E8JzY" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
@@ -51,6 +51,21 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="homaura" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="homaura" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -63,6 +78,7 @@
       <workItem from="1716131660864" duration="55000" />
       <workItem from="1716131736313" duration="25000" />
       <workItem from="1716185389358" duration="1208000" />
+      <workItem from="1716288486039" duration="1514000" />
     </task>
     <servers />
   </component>

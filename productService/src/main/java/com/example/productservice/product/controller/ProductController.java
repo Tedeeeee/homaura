@@ -1,5 +1,6 @@
 package com.example.productservice.product.controller;
 
+import com.example.productservice.product.dto.PageResponseDto;
 import com.example.productservice.product.dto.ProductDto;
 import com.example.productservice.product.entity.Content;
 import com.example.productservice.product.mapstruct.ProductMapStruct;
@@ -15,6 +16,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,19 +41,41 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productMapStruct.changeResponse(product));
     }
 
-    // 전체 상품 검색
-    @GetMapping("")
-    public ResponseEntity<Slice<ResponseProduct>> getProductList(Pageable pageable) {
-        Slice<ProductDto> products = productService.getProducts(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(products.map(productMapStruct::changeResponse));
+    // 전체 상품 List 방식 검색
+    @GetMapping("/list")
+    public ResponseEntity<List<ResponseProduct>> getProductList() {
+        List<ProductDto> products = productService.getProducts();
+        List<ResponseProduct> list = products.stream()
+                .map(productMapStruct::changeResponse)
+                .toList();
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    // 전체 상품 Page 방식 검색
+    @GetMapping("/page")
+    public ResponseEntity<Page<ResponseProduct>> getProductPage(@RequestParam(defaultValue = "0") int num) {
+        Page<ProductDto> productByName = productService.getProducts(num);
+        return ResponseEntity.status(HttpStatus.OK).body(productByName.map(productMapStruct::changeResponse));
+    }
+
+    // 전체 상품 캐싱
+    @Cacheable(cacheNames = "products", key = "#num")
+    @GetMapping("/redis")
+    public PageResponseDto<ResponseProduct> getProductByName(@RequestParam(defaultValue = "0") int num) {
+        Page<ProductDto> pageBy = productService.getProducts(num);
+        List<ResponseProduct> responseProducts = pageBy.getContent().stream()
+                .map(productMapStruct::changeResponse)
+                .collect(Collectors.toList());
+
+        return new PageResponseDto<>(
+                responseProducts, pageBy.getNumber(), pageBy.getSize(), pageBy.getTotalElements()
+        );
     }
 
     // 검색한 상품 확인 시 페이징 처리
     @GetMapping("/{productName}/search")
-    public ResponseEntity<Page<ResponseProduct>> getProductByName(@PathVariable String productName,
-                                                                  @RequestParam(defaultValue = "0") int num,
-                                                                  @RequestParam(defaultValue = "10") int size) {
-        Page<ProductDto> productByName = productService.getProductByName(productName, num, size);
-        return ResponseEntity.status(HttpStatus.OK).body(productByName.map(productMapStruct::changeResponse));
+    public ResponseEntity<Page<ResponseProduct>> getProductByName(@PathVariable String productName,@RequestParam(defaultValue = "0") int num) {
+        Page<ProductDto> pageBy = productService.getProductByName(productName, num);
+        return ResponseEntity.status(HttpStatus.OK).body(pageBy.map(productMapStruct::changeResponse));
     }
 }

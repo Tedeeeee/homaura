@@ -19,7 +19,7 @@
 7. [유용한 링크](#-유용한-링크)  
 ---
 ## 🚧 서비스 구성 및 아키텍처
-![MSA 아키텍쳐](https://github.com/Tedeeeee/homaura/assets/118357403/b21c1658-5fda-4613-aae7-ea0de0255b82)
+![MSA 아키텍쳐](https://github.com/Tedeeeee/homaura/assets/118357403/6d1a6313-fc71-4c61-9f17-d025ebecafff)
 ## 🌟 주요 기능
 - **유저 관리** : 회원가입시 이메일을 인증하여 유저의 신뢰도를 높입니다.
 - **상품 구매 시 배송 관리** : 상품을 주문한 후 해당 상품의 배달 상태를 파악하고 배달을 진행합니다.
@@ -49,18 +49,19 @@
 - **APIGateway와 Redis의 기능을 합쳐 로그아웃 응답 속도 개선** <br> 인가를 모든 서비스에서 진행하지 않고 ApiGateway에서 진행하고 또한 Redis의 기능을 도입하게 되며 로그아웃 이후 같은 토큰으로 요청을 할 경우 비인가 응답속도가 29ms -> 5ms로 약 80%의 성능 향상을 확인했습니다. [<u>[자세한 내용](https://latewalk.tistory.com/235)</u>]
 - **JPA의 N+1 문제** <br> 1:N 상황에서 양방향 관계가 형성되면서 LAZY 한 fetch 정책으로 쿼리문이 추가적으로 발생하던 것을 jpql을 repository에 추가하여 한 개의 쿼리문이 작성되며 49ms -> 21ms로 약 50%의 성능 향상을 확인했습니다. [<u>[자세한 내용](https://latewalk.tistory.com/249)</u>]
 - **쿠폰 발급 로직에 Kafka 도입** <br> Feign 방식으로 인해 응답을 기다리게 되면서 서비스 성능의 하락으로 이어졌기에 굳이 기다릴 필요없는 상황에서 MQ방식을 통해 메세지만 전달하여 서비스의 처리를 진행하도록 하기 위해 Kafka를 도입했습니다. [<u>[자세한 내용](https://latewalk.tistory.com/251)</u>]
+- **Redis 캐싱을 통해 상품 조회 성능 향상** <br> 기존의 전체 상품을 Page로 가져오는 과정에서 대용량 요청으로 인해 DB에 과부하로 인한 서비스의 장애 발생을 우려하여 변경이 많지 않은 데이터를 redis에 저장하고 이후의 요청은 모두 Redis에 저장된 데이터로 캐싱 처리하여 대규모 요청을 하더라도 일정한 응답 속도를 나타내었고 Page와 비교해 응답 시간이 58.3%상승했습니다 [<u>[자세한 내용](https://latewalk.tistory.com/264)</u>]
 ---
 ### 트러블슈팅
 - **이메일 인증을 위해 사용한 저장소** <br> Stateless 로 인해 기존의 세션 저장소를 사용할 수 없어져 Redis에 key와 value값을 기반으로 만료 시간을 통해 값을 저장해서 사용했습니다. [<u>[자세한 내용](https://latewalk.tistory.com/238)</u>]
 - **로그아웃시 이후 요청에 해당 토큰 사용 불가** <br> Redis에 로그아웃한 AccessToken을 저장해서 로그아웃을 기억하는 블랙리스트 방식으로 해결했습니다. [<u>[자세한 내용](https://latewalk.tistory.com/236)</u>]
 - **재고 수량의 동시성 문제** <br> 데이터 처리 로직이 복잡하지 않고 여러개의 인스턴스가 한개의 DB를 바라보기 때문에 DB의 Lock을 선택하고 데이터 충돌이 빈번하게 발생할 것으로 예상되어 비관적 락을 선택했습니다. [<u>[자세한 내용](https://latewalk.tistory.com/244)</u>] 
-- **스케줄러 도입** <br> 배송 상태를 하루마다 한 번씩 체크하면서 취소와 반품 가능 여부를 판단하여 진행했습니다. [<u>[자세한 내용](https://latewalk.tistory.com/229)</u>]
+- **스케줄러 도입과 전용 서버 증설** <br> 배송 상태를 하루마다 한 번씩 체크하면서 취소와 반품 가능 여부를 판단하여 진행하고 서버가 증설되면서 중복으로 진행될 수 있는 스케줄러를 방지해서 서버를 분리하여 독립적으로 움직이도록 구현했습니다. [<u>[자세한 내용](https://latewalk.tistory.com/229)</u>]
 - **Redis의 Sorted Set 타입의 데이터로 선착순 정리** <br> 쿠폰을 발급받기위해 수많은 사람들이 몰리기 때문에 응답속도의 저하, 동시성 제어 처리 복잡, 사용자의 경험 하락으로 인해 나아가 서비스의 장애로 이어질 수 있는 상황이 발생할 가능성이 높아졌기 때문에 이 문제들을 처리하기 위해 Redis의 SortedSet을 사용하여 사용자를 줄세워 문제점을 없앴습니다. [<u>[자세한 내용](https://latewalk.tistory.com/250)</u>] 
 - **Feign 방식에서 수신 서비스가 문제가 발생했을때 회복탄력성 처리** <br> 요청을 보낸 서비스가 문제가 발생했을때 해당 서비스의 문제가 아닌 다른 곳의 문제가 발생하게 되지만 응답이 마치 해당 서비스에서 발생한것처럼 처리되는 것을 방지하기 위해resilience4J의 circuitBreaker와 retry방식을 도입해서 관리를 진행했습니다. [<u>[자세한 내용](https://latewalk.tistory.com/245)</u>] 
 
 전체 프로젝트 관련 글은 해당 <u>[블로그](https://latewalk.tistory.com/category/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%ED%95%AD%ED%95%B499%20%EA%B0%9C%EC%9D%B8%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8)</u>에서 모두 확인하실 수 있습니다
 ## 🗂 ERD
-![image](https://github.com/Tedeeeee/homaura/assets/118357403/023cc1c8-2680-43cb-a878-38270f55dab0)
+![화면 캡처 2024-06-01 185924](https://github.com/Tedeeeee/homaura/assets/118357403/1d80d9a7-225d-4755-8070-a5684b0ff941)
 https://drawsql.app/teams/shopingmall/diagrams/shopdiagram
 
 ## 📚 API 문서
